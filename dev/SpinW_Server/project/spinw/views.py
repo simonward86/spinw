@@ -12,17 +12,17 @@ import sys
 from io import StringIO
 from pathlib import Path
 
-from project import db, config, auth, eng, results, running
+from project import db, config, multi_auth, eng, results, running
 from project.models import UserJobs
-
 
 ################
 #### config ####
 ################
 
-spinw_blueprint = Blueprint('spinw', __name__,)
+spinw_blueprint = Blueprint('spinw', __name__, )
 out_pipe = StringIO()
 err_pipe = StringIO()
+
 
 @spinw_blueprint.route('/spinw')
 def get_resource():
@@ -40,8 +40,9 @@ def get_version():
     temp['Version'] = config.get('SERVER_VERSION')
     return json.dumps(temp)
 
+
 @spinw_blueprint.route('/spinw/status/<string:token>')
-@auth.login_required
+@multi_auth.login_required
 def get_status(token):
     user = g.user
     if not user:
@@ -76,7 +77,7 @@ def get_status(token):
 
 
 @spinw_blueprint.route("/spinw/status/download/<string:token>")
-@auth.login_required
+@multi_auth.login_required
 def download_file(token):
     path = os.path.join(Path(__file__).parents[2], token)
     if os.path.isfile(path):
@@ -84,20 +85,22 @@ def download_file(token):
     else:
         path = os.path.join(config.get('UPLOAD_FOLDER'), '%s' % token)
         if os.path.isfile(path):
-            return send_from_directory(directory=os.path.join(Path(__file__).parents[2],config.get('UPLOAD_FOLDER')), filename=token)
+            return send_from_directory(directory=os.path.join(Path(__file__).parents[2], config.get('UPLOAD_FOLDER')),
+                                       filename=token)
         else:
             return json.dumps({'status': 'File not found.'})
 
+
 @spinw_blueprint.route('/spinw/upload/<string:filename>', methods=['GET', 'POST'])
-@auth.login_required
+@multi_auth.login_required
 def upload(filename):
+    user = g.user
     if request.method == 'POST':
         file = request.data
         extension = os.path.splitext(filename)[1]
         if extension != ".mat":
             abort(400)
         token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
-        user = g.user
         job = UserJobs(token)
         user.jobs.append(job)
         db.session.commit()
@@ -109,18 +112,14 @@ def upload(filename):
             w.write(file)
         running[token] = eng.getArrayFromByteStream(file)
         return (
-            json.dumps({'username': user.username, 'status': url_for('spinw.get_status', token=token, _external=True)}), 201)
+            json.dumps({'username': user.username, 'status': url_for('spinw.get_status', token=token, _external=True)}),
+            201)
 
 
 @spinw_blueprint.route('/spinw/compute/<string:filename>', methods=['GET'])
-@auth.login_required
 def compute_deployed(filename):
-    return abort(404)
-
-
-@spinw_blueprint.route('/spinw/spinwave/<string:filename>', methods=['POST'])
-@auth.login_required
-def compute_spinwave(filename):
+    if config.get('USE_PYMATLAB'):
+        return abort(404)
     user = g.user
     if request.method == 'POST':
         data = request.data
@@ -128,6 +127,36 @@ def compute_spinwave(filename):
         if extension != ".mat":
             abort(400)
         job = user.jobs.filter(UserJobs.completed == False).order_by(UserJobs.start_time)[0]
+        token = job.token
+        f_name = 'in_' + str(token) + extension
+        with open(os.path.join(config['UPLOAD_FOLDER'], f_name), 'wb') as w:
+            w.write(data)
+        if token is None:
+            abort(400)
+        job.start_time = datetime.datetime.now()
+        job.running = True
+        success = eng.send_comand('EXEC ' + token + ' 1.23:')
+        results[token] = success
+    db.session.commit()
+    return json.dumps(
+        {'Calculating': True, 'Errors': False, 'status': url_for('spinw.get_status', token=token, _external=True)})
+
+@spinw_blueprint.route('/spinw/spinwave/<string:filename>', methods=['POST'])
+@multi_auth.login_required
+def compute_spinwave(filename):
+    user = g.user
+    if request.method == 'POST':
+        data = request.data
+        extension = os.path.splitext(filename)[1]
+        if extension != ".mat":
+            abort(400)
+        if config.get('USE_PYMATLAB'):
+            job = user.jobs.filter(UserJobs.completed == False, UserJobs.running == False).order_by(UserJobs.upload_time)[0]
+        else:
+            token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
+            job = UserJobs(token)
+            user.jobs.append(job)
+            db.session.commit()
         token = job.token
         f_name = 'in_' + str(token) + extension
         with open(os.path.join(config['UPLOAD_FOLDER'], f_name), 'wb') as w:
@@ -160,7 +189,7 @@ def compute_spinwave(filename):
 
 
 @spinw_blueprint.route('/spinw/powspec/<string:filename>', methods=['POST'])
-@auth.login_required
+@multi_auth.login_required
 def compute_powspec(filename):
     user = g.user
     if request.method == 'POST':
@@ -168,7 +197,13 @@ def compute_powspec(filename):
         extension = os.path.splitext(filename)[1]
         if extension != ".mat":
             abort(400)
-        job = user.jobs.filter(UserJobs.completed == False).order_by(UserJobs.start_time)[0]
+        if config.get('USE_PYMATLAB'):
+            job = user.jobs.filter(UserJobs.completed == False, UserJobs.running == False).order_by(UserJobs.upload_time)[0]
+        else:
+            token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
+            job = UserJobs(token)
+            user.jobs.append(job)
+            db.session.commit()
         token = job.token
         f_name = 'in_' + str(token) + extension
         with open(os.path.join(config['UPLOAD_FOLDER'], f_name), 'wb') as w:

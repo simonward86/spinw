@@ -6,7 +6,7 @@ import json
 from flask import abort, request, g, render_template, Blueprint
 import datetime
 
-from project import db, config, auth
+from project import db, config, basic_auth, token_auth, multi_auth
 from project.models import User
 
 ################
@@ -16,18 +16,29 @@ from project.models import User
 user_blueprint = Blueprint('user', __name__, )
 
 
-@auth.verify_password
+@basic_auth.verify_password
 def verify_password(username_or_token, password):
-    # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token)
-    if not user:
+    # first try to authenticate by token if user is silly
+    g.user = None
+    if verify_token(username_or_token): # this sets g.user as well.
+        return True
+    else:
         # try to authenticate with username/password
         user = User.query.filter_by(username=username_or_token).first()
         if not user or not user.verify_password(password):
             return False
-    g.user = user
-    return True
+        g.user = user
+        return True
 
+@token_auth.verify_token
+def verify_token(token):
+    g.user = None
+    user = User.verify_auth_token(token)
+    if not user:
+        return False
+    else:
+        g.user = user
+        return True
 
 @user_blueprint.route('/users/add', methods=['POST'])
 def new_user():
@@ -70,21 +81,21 @@ def confirm_email(token):
 
 
 @user_blueprint.route('/users/token')
-@auth.login_required
+@basic_auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(config.get("TOKEN_DURATION"))
     return json.dumps({'token': token.decode('ascii'), 'duration': config.get("TOKEN_DURATION")})
 
 
 @user_blueprint.route('/users/quota')
-@auth.login_required
+@multi_auth.login_required
 def get_quota():
     user = g.user
     return json.dumps({'used': user.quota_used, 'total': user.quota_total})
 
 
 @user_blueprint.route("/users/jobs")
-@auth.login_required
+@multi_auth.login_required
 def job_list():
     user = g.user
     j_list = []

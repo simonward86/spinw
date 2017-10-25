@@ -122,6 +122,7 @@ class UserJobs(db.Model, AutoSerialize):
     job_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     token = db.Column(db.String(32), index=True)
+    upload_time = db.Column(db.DateTime)
     start_time = db.Column(db.DateTime)
     end_time = db.Column(db.DateTime)
     running = db.Column(db.Boolean)
@@ -131,3 +132,4 @@ class UserJobs(db.Model, AutoSerialize):
         self.token = token
         self.completed = False
         self.running = False
+        self.upload_time = datetime.datetime.now()

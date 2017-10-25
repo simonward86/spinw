@@ -33,6 +33,8 @@ class BaseConfig(object):
     SERVER_VERSION = '2.0.0'
     USE_LDAP = False
     USE_PYMATLAB = True
+    DEPLOY_PATH='/MATLAB/mtools/SpinW_Dev/spinw/dev/server/Linux/spinw_server_linux.sh'
+    DEPLOY_CORES = 1
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
@@ -40,22 +42,32 @@ class DevelopmentConfig(BaseConfig):
     DEPLOY_PORT = 13001
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
     TOKEN_DURATION = 600  # This is 10 minutes
-
+    DEBUG = True
 
 class TestingConfig(BaseConfig):
     """Testing configuration."""
     DEPLOY_SERVER= '127.0.0.1'
     DEPLOY_PORT = 13001
-    SQLALCHEMY_DATABASE_URI = 'sqlite://:memory:'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///:memory:'
     TOKEN_DURATION = 300  # This is 5 minutes
+    DEBUG = True
 
+class DevelopmentDeployedConfig(BaseConfig):
+    """Testing configuration."""
+    DEPLOY_SERVER= '127.0.0.1'
+    DEPLOY_PORT = 13001
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+    TOKEN_DURATION = 300  # This is 5 minutes
+    USE_PYMATLAB = False
+    DEBUG = True
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
     SECRET_KEY = None
     SECURITY_PASSWORD_SALT = None
-
     SQLALCHEMY_DATABASE_URI = None
+
+    DEBUG = False
 
     # production config takes precedence over env variables
 

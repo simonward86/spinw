@@ -15,3 +15,7 @@ _pdf
 dev/server/Linux/spinw_server
 
 dev/SpinW_Server/\.idea/
+
+*.done
+
+*.pyc

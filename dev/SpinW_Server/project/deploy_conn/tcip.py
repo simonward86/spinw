@@ -1,4 +1,10 @@
 import socket
+from subprocess import Popen
+from project import config
+import time
+import os
+from pathlib import Path
+
 
 class tcip:
     def __init__(self, host, port=13001):
@@ -6,6 +12,7 @@ class tcip:
         self.port = port
         self.host = host
         self.is_connected = False
+        self.process = None
 
     def __del__(self):
         if self.is_connected:
@@ -13,6 +20,9 @@ class tcip:
 
     def connect(self):
         if not self.is_connected:
+            self.process = Popen([config.get('DEPLOY_PATH'),os.path.join(Path(__file__).parents[2],
+                                    config.get('UPLOAD_FOLDER')), str(config.get('DEPLOY_CORES')), str(self.port)])
+            time.sleep(5)
             self.socket.connect((self.host, self.port))
             self.is_connected = True
 
@@ -25,7 +35,9 @@ class tcip:
                 self.socket.sendall(cmd.encode('utf-8'))
             return True
         except:
-            self.socket.connect((self.host, self.port))
+            self.is_connected = False
+            self.process.kill()
+            time.sleep(1)
             self.connect()
             self.socket.sendall(cmd.encode('utf-8'))
             return False

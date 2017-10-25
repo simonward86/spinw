@@ -9,7 +9,8 @@ import os
 
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-from flask_httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth, MultiAuth
+from subprocess import Popen
 
 ################
 #### config ####
@@ -40,14 +41,17 @@ _check_config_variables_are_set(config)
 ####################
 
 # extensions
-auth = HTTPBasicAuth()
+basic_auth = HTTPBasicAuth()
+token_auth = HTTPTokenAuth('Bearer')
+multi_auth = MultiAuth(basic_auth, token_auth)
+
 db = SQLAlchemy(app)
 
 if config.get('USE_PYMATLAB'):
     import matlab.engine
     eng = matlab.engine.start_matlab()
 else:
-    from project.communication import tcip
+    from project.deploy_conn import tcip
     eng = tcip.tcip(config.get('DEPLOY_SERVER'), config.get('DEPLOY_PORT'))
 
 
@@ -64,6 +68,15 @@ running = dict()
 from project.main.views import main_blueprint
 from project.spinw.views import spinw_blueprint
 from project.user.views import user_blueprint
+
 app.register_blueprint(main_blueprint)
 app.register_blueprint(user_blueprint)
 app.register_blueprint(spinw_blueprint)
+
+####################
+#### threading  ####
+####################
+from status import Status
+
+status_thread = Status(2)
+status_thread.start()
