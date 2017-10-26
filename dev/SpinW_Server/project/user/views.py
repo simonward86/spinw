@@ -1,3 +1,4 @@
+        # try to authenticate with username/password
 #################
 #### imports ####
 #################
