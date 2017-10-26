@@ -88,21 +88,17 @@ classdef spinwR < handle
         
         
         function newUser(obj,varargin)
-            if isempty(varargin)
-                password = [];
-            elseif length(varargin) == 1
-                password = varargin{1};
-            elseif length(varargin) == 2
-                obj.username = varargin{1};
-                password = varargin{2};
+            if length(varargin)==3
+                Lusername = varargin{1};
+                obj.username = varargin{2};
+                password = varargin{3};
+            else
+                [Lusername, obj.username, password] = obj.GetAuthentication();
             end
-            if isempty(password)
-                [obj.username, password] = obj.GetAuthentication();
-                swpref.setpref('remoteuser',obj.username)
-            end
-            url = strcat(obj.baseURL,'/users/add');
+            swpref.setpref('remoteuser',obj.username)
+            url = strcat(obj.baseURL,'/users/register');
             try
-                response = webwrite(url,'username',obj.username,'password',password,weboptions('ContentType','json'));
+                response = webwrite(url,'username',Lusername,'email',obj.username,'password',password,weboptions('ContentType','json'));
             catch ME
                 if strcmp(ME.identifier,'MATLAB:webservices:HTTP409StatusCodeError')
                     obj.status = 'User Exists';
@@ -388,7 +384,7 @@ classdef spinwR < handle
         end
         
         
-        function [username,password]=GetAuthentication(obj)
+        function [username,email, password]=GetAuthentication(obj)
             %GetAuthentication prompts a username and password from a user and hides the
             % password input by *****
             %
@@ -409,63 +405,106 @@ classdef spinwR < handle
             defaultuser = obj.username;
             
             hAuth.fig = figure('Menubar','none','Units','normalized','Resize','off','NumberTitle','off', ...
-                'Name','Authentication','Position',[0.4 0.4 0.2 0.2],'WindowStyle','normal');
+                'Name','Authentication','Position',[0.4 0.35 0.2 0.3],'WindowStyle','normal');
             
             uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0 0 1 1], ...
                 'FontSize',12);
             
-            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.8 0.8 0.1], ...
+            % Username
+            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.85 0.8 0.1], ...
                 'FontSize',12,'String','Username:','HorizontalAlignment','left');
             
-            
-            hAuth.eUsername = uicontrol('Parent',hAuth.fig,'Style','edit','Tag','username','Units','normalized','Position',[0.1 0.675 0.8 0.125], ...
+            hAuth.eUsername = uicontrol('Parent',hAuth.fig,'Style','edit','Tag','username','Units','normalized','Position',[0.1 0.8 0.8 0.1], ...
                 'FontSize',12,'String',defaultuser,'BackGroundColor','white','HorizontalAlignment','left');
             
-            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.5 0.8 0.1], ...
+            % Email
+            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.675 0.8 0.1], ...
+                'FontSize',12,'String','Email:','HorizontalAlignment','left');
+            
+            hAuth.eEmail= uicontrol('Parent',hAuth.fig,'Style','edit','Tag','email','Units','normalized','Position',[0.1 0.625 0.8 0.1], ...
+                'FontSize',12,'String',defaultuser,'BackGroundColor','white','HorizontalAlignment','left');
+            
+            % Password1
+            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.50 0.8 0.1], ...
                 'FontSize',12,'String','Password:','HorizontalAlignment','left');
             
-            hAuth.ePassword = uicontrol('Parent',hAuth.fig,'Style','edit','Tag','password','Units','normalized','Position',[0.1 0.375 0.8 0.125], ...
+            hAuth.ePassword1 = uicontrol('Parent',hAuth.fig,'Style','edit','Tag','password','Units','normalized','Position',[0.1 0.45 0.8 0.1], ...
                 'FontSize',12,'String','','BackGroundColor','white','HorizontalAlignment','left');
             
+            % Password2
+            uicontrol('Parent',hAuth.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.325 0.8 0.1], ...
+                'FontSize',12,'String','Password:','HorizontalAlignment','left');
+            
+            hAuth.ePassword2 = uicontrol('Parent',hAuth.fig,'Style','edit','Tag','password','Units','normalized','Position',[0.1 0.275 0.8 0.1], ...
+                'FontSize',12,'String','','BackGroundColor','white','HorizontalAlignment','left');
+            
+            % Button
             uicontrol('Parent',hAuth.fig,'Style','pushbutton','Tag','OK','Units','normalized','Position',[0.1 0.05 0.35 0.2], ...
-                'FontSize',12,'String','OK','Callback','uiresume;');
+                'FontSize',12,'String','OK','Callback',@ComfirmPassword);
             
             uicontrol('Parent',hAuth.fig,'Style','pushbutton','Tag','Cancel','Units','normalized','Position',[0.55 0.05 0.35 0.2], ...
                 'FontSize',12,'String','Cancel','Callback',@AbortAuthentication);
             
             set(hAuth.fig,'CloseRequestFcn',@AbortAuthentication)
-            set(hAuth.ePassword,'KeypressFcn',@PasswordKeyPress)
-            
+            set(hAuth.ePassword1,'KeypressFcn',@PasswordKeyPress1)
+            set(hAuth.ePassword2,'KeypressFcn',@PasswordKeyPress2)
+
             setappdata(0,'hAuth',hAuth);
             uicontrol(hAuth.eUsername);
             uiwait;
             
             username = get(hAuth.eUsername,'String');
-            password = get(hAuth.ePassword,'UserData');
+            email = get(hAuth.eEmail,'String');
+           
             delete(hAuth.fig);
             
-            function PasswordKeyPress(hObject,event)
+            function ComfirmPassword(hObject,event)
+                password1 = get(hAuth.ePassword1,'UserData');
+                password2 = get(hAuth.ePassword2,'UserData');
+                if strmatch(password1,password2)
+                    password = password1;
+                    uiresume;
+                end
+            end
+            
+            function PasswordKeyPress1(hObject,event)
                 hAuth = getappdata(0,'hAuth');
-                password = get(hAuth.ePassword,'UserData');
+                password1 = get(hAuth.ePassword1,'UserData');
                 switch event.Key
                     case 'backspace'
-                        password = password(1:end-1);
+                        password1 = password1(1:end-1);
                     case 'return'
                         uiresume;
                         return;
                     otherwise
-                        password = [password event.Character];
+                        password1 = [password1 event.Character];
                 end
-                set(hAuth.ePassword,'UserData',password)
-                set(hAuth.ePassword,'String',char('*'*sign(password)))
+                set(hAuth.ePassword1,'UserData',password1)
+                set(hAuth.ePassword1,'String',char('*'*sign(password1)))
+            end
+            
+            function PasswordKeyPress2(hObject,event)
+                hAuth = getappdata(0,'hAuth');
+                password2 = get(hAuth.ePassword2,'UserData');
+                switch event.Key
+                    case 'backspace'
+                        password2 = password2(1:end-1);
+                    case 'return'
+                        uiresume;
+                        return;
+                    otherwise
+                        password2 = [password2 event.Character];
+                end
+                set(hAuth.ePassword2,'UserData',password2)
+                set(hAuth.ePassword2,'String',char('*'*sign(password2)))
             end
             
             function AbortAuthentication(hObject,event)
                 hAuth = getappdata(0,'hAuth');
                 set(hAuth.eUsername,'String','');
-                set(hAuth.ePassword,'UserData','');
+                set(hAuth.ePassword1,'UserData','');
+                set(hAuth.ePassword2,'UserData','');
                 uiresume;
-                
             end
         end
     end

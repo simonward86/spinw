@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Job Lists</title>
-</head>
-<body>
-    <table>
+{% extends "_base.html" %}
+
+{% block content %}
+<br>
+    <h1>Job History</h1>
+    <table class="table">
         <tr>
             <th>Job ID</th>
             <th>Job hash</th>
@@ -25,5 +23,5 @@
             {% endfor %}
         </tbody>
     </table>
-</body>
-</html>
+
+{% endblock %}

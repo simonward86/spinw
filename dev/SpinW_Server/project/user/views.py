@@ -1,15 +1,16 @@
-        # try to authenticate with username/password
 #################
 #### imports ####
 #################
 import json
 
-from flask import abort, request, g, render_template, Blueprint
+from flask import abort, request, g, render_template, Blueprint, url_for, redirect, flash
+from flask_login import login_user, logout_user, login_required, current_user
 import datetime
 
 from project import db, config, basic_auth, token_auth, multi_auth
 from project.models import User
 
+from project.user.forms import RegisterForm, LoginForm
 ################
 #### config ####
 ################
@@ -27,7 +28,9 @@ def verify_password(username_or_token, password):
         # try to authenticate with username/password
         user = User.query.filter_by(username=username_or_token).first()
         if not user or not user.verify_password(password):
-            return False
+            user = User.query.filter_by(email=username_or_token).first()
+            if not user or not user.verify_password(password):
+                return False
         g.user = user
         return True
 
@@ -41,28 +44,55 @@ def verify_token(token):
         g.user = user
         return True
 
-@user_blueprint.route('/users/add', methods=['POST'])
-def new_user():
-    if 'MATLAB' in request.headers.environ.get('HTTP_USER_AGENT'):
-        username = request.form.get('username')
-        password = request.form.get('password')
+@user_blueprint.route('/users/register', methods=['GET', 'POST'])
+def register():
+    best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+    if best in 'text/html':
+        form = RegisterForm(request.form)
+        if form.validate_on_submit():
+            user = User(form.username.data,form.password.data,
+                    email=form.email.data, confirmed=False)
+            db.session.add(user)
+            db.session.commit()
+        return render_template('user/register.html', form=form)
+
+    elif best in 'application/json':
+        if 'MATLAB' in request.headers.environ.get('HTTP_USER_AGENT'):
+            username = request.form.get('username')
+            password = request.form.get('password')
+            email = request.form.get('email')
+        else:
+            username = request.json.get('username')
+            password = request.json.get('password')
+            email = request.json.get('email')
+        if username is None:
+            abort(400)
+        else:
+            if password is None and not config.get('USE_LDAP'):
+                abort(400)  # missing arguments
+        if User.query.filter_by(email=email).first() is not None:
+            abort(409)  # existing user
+        if config.get('USE_LDAP'):  # Create the user
+            user = User(username=username, password="",email=email)
+        else:
+            user = User(username=username, password=password,email=email)
+        db.session.add(user)
+        db.session.commit()
+        return (json.dumps({'username': user.email}), 201)
     else:
-        username = request.json.get('username')
-        password = request.json.get('password')
-    if username is None:
         abort(400)
-    else:
-        if password is None and not config.get('USE_LDAP'):
-            abort(400)  # missing arguments
-    if User.query.filter_by(username=username).first() is not None:
-        abort(409)  # existing user
-    if config.get('USE_LDAP'):  # Create the user
-        user = User(username=username, password="")
-    else:
-        user = User(username=username, password=password)
-    db.session.add(user)
-    db.session.commit()
-    return (json.dumps({'username': user.username}), 201)
+
+@user_blueprint.route('/users/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and verify_password(user.email, request.form['password']):
+            return redirect(url_for('user.job_list'))
+        else:
+            flash('Invalid email and/or password.', 'danger')
+            return render_template('user/login.html', form=form)
+    return render_template('user/login.html', form=form)
 
 
 @user_blueprint.route('/users/confirm/<token>')
@@ -102,4 +132,4 @@ def job_list():
     j_list = []
     for job in user.jobs.all():
         j_list.append(job.get_public())
-    return render_template('table.html', jobs=j_list)
+    return render_template('user/table.html', jobs=j_list)

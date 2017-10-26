@@ -1,0 +1,62 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+    <br>
+    <form class="form" role="form" method="post" action="">
+        <h1>Please Register</h1>
+        {{ form.csrf_token }}
+        <div class="field-wrap">
+        {{ form.username(placeholder="Username") }}
+        </div>
+        <span class="error">
+      {% if form.username.errors %}
+          <p>
+        {% for error in form.username.errors %}
+            {{ error }}
+        {% endfor %}
+          </p>
+      {% endif %}
+    </span>
+    <div class="field-wrap">
+        {{ form.email(placeholder="Email address") }}
+    </div>
+        <span class="error">
+      {% if form.email.errors %}
+          <p>
+              {% for error in form.email.errors %}
+                  {{ error }}
+              {% endfor %}
+          </p>
+      {% endif %}
+        </span>
+    <div class="field-wrap">
+        {{ form.password(placeholder="Password") }}
+    </div>
+        <span class="error">
+      {% if form.password.errors %}
+          <p>
+              {% for error in form.password.errors %}
+                  {{ error }}
+              {% endfor %}
+          </p>
+      {% endif %}
+        </span>
+    <div class="field-wrap">
+        {{ form.confirm(placeholder="Confirm password") }}
+    </div>
+        <span class="error">
+      {% if form.confirm.errors %}
+          <p>
+              {% for error in form.confirm.errors %}
+                  {{ error }}
+              {% endfor %}
+          </p>
+      {% endif %}
+        </span>
+        <button class="button button-block" type="submit">Register!</button>
+        <br><br>
+        <p>Already have an account? <a href="/users/login">Sign in</a>.</p>
+    </form>
+
+{% endblock %}

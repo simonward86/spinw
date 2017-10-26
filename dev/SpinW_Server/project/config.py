@@ -30,7 +30,7 @@ class BaseConfig(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = 'Uploaded'
     LDAP_SERVER = 'd.psi.ch'
-    SERVER_VERSION = '2.0.0'
+    SERVER_VERSION = '2.0.5'
     USE_LDAP = False
     USE_PYMATLAB = True
     DEPLOY_PATH='/MATLAB/mtools/SpinW_Dev/spinw/dev/server/Linux/spinw_server_linux.sh'

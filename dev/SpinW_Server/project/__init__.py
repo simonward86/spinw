@@ -8,9 +8,8 @@
 import os
 
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth, MultiAuth
-from subprocess import Popen
 
 ################
 #### config ####

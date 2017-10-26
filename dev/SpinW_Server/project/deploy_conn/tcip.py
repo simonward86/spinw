@@ -4,7 +4,7 @@ from project import config
 import time
 import os
 from pathlib import Path
-
+import atexit
 
 class tcip:
     def __init__(self, host, port=13001):
@@ -22,6 +22,7 @@ class tcip:
         if not self.is_connected:
             self.process = Popen([config.get('DEPLOY_PATH'),os.path.join(Path(__file__).parents[2],
                                     config.get('UPLOAD_FOLDER')), str(config.get('DEPLOY_CORES')), str(self.port)])
+            atexit.register(self.process.terminate)
             time.sleep(5)
             self.socket.connect((self.host, self.port))
             self.is_connected = True

@@ -57,8 +57,9 @@ class AutoSerialize(object):
 
 class User(db.Model, AutoSerialize):
     __tablename__ = 'users'
-    __public__ = ('id', 'username', 'registered_on', 'admin', 'quota_total', 'quota_used')
+    __public__ = ('id', 'username', 'registered_on', 'admin', 'quota_total', 'quota_used', 'email')
     id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(64), index=True,unique=True)
     username = db.Column(db.String(32), index=True, unique=True)
     token = db.Column(db.String(10))
     jobs = db.relation('UserJobs', backref='users', lazy='dynamic')
@@ -70,13 +71,14 @@ class User(db.Model, AutoSerialize):
     quota_total = db.Column(db.Float)
     quota_used = db.Column(db.Float)
 
-    def __init__(self, username, password, useLDAP=False, admin=False, confirmed_on=None, confirmed=False):
+    def __init__(self, username, password, email=None, admin=False, confirmed_on=None, confirmed=False):
         self.username = username
-        if useLDAP:
+        if config.get('USE_LDAP'):
             self.password_hash = None
         else:
             self.hash_password(password)
         self.registered_on = datetime.datetime.now()
+        self.email = email
         self.admin = admin
         self.confirmed = confirmed
         self.confirmed_on = confirmed_on
@@ -89,7 +91,7 @@ class User(db.Model, AutoSerialize):
 
     def verify_password(self, password):
         try:
-            if config.get('useLDAP'):
+            if config.get('USE_LDAP'):
                 conn.simple_bind_s('%s@%s' % (self.username, config.get('LDAP_SERVER')), password)
                 return True
             else:
