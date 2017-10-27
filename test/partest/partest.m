@@ -1,10 +1,10 @@
-function partest01(varargin)
+function partest(varargin)
 % partest01(nQ,numWorker,nThread,nRun)
 %
 
-inpForm.fname  = {'nQ'  'nWorker' 'nThread' 'nRun' 'fName'   };
-inpForm.defval = {1e2   2         -1        1      'test.mat'};
-inpForm.size   = {[1 1] [1 1]     [1 1]     [1 1]  [1 -1]    };
+inpForm.fname  = {'nQ'  'nWorker' 'nThread' 'nRun' 'fName'    'nSlice'};
+inpForm.defval = {1e2   2         -1        1      'test.mat' 1       };
+inpForm.size   = {[1 1] [1 1]     [1 1]     [1 1]  [1 -1]     [1 1]   };
 
 param = sw_readparam(inpForm, varargin{:});
 
@@ -13,7 +13,7 @@ nWorker = param.nWorker;
 nThread = param.nThread;
 nRun    = param.nRun;
 fName   = param.fName;
-
+nSlice  = param.nSlice;
 
 if nargin == 0
     nQ = 1e3;
@@ -26,8 +26,6 @@ swpref.setpref('usemex',false,'tid',0,'fid',0);
 
 yig = yig_create;
 Q = rand(3,nQ);
-
-nSlice  = 4;
 
 if nThread > 0
     setenv('OMP_NUM_THREADS',num2str(nThread));
