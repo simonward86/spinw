@@ -1,0 +1,56 @@
+{% extends "_base_new.html" %}
+
+{% block content %}
+    <br>
+    <h2 style="text-align:center">Running Jobs</h2>
+    {% if running_jobs.__len__() == 0 %}
+    <table class="table">
+        <tr>
+            <th> No jobs running</th>
+        </tr>
+    </table>
+    {% else %}
+    <table class="table">
+        <tr>
+            <th>Job ID</th>
+            <th>Job hash</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Completed</th>
+        </tr>
+        <tbody>
+        {% for job in running_jobs %}
+            <tr>
+                <td>{{ job.job_id }}</td>
+                <td>{{ job.token }}</td>
+                <td>{{ job.start_time }}</td>
+                <td>{{ job.end_time }}</td>
+                <td>{{ job.completed|tojson }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <h2 style="text-align:center">Completed Jobs</h2>
+    <table class="table">
+        <tr>
+            <th>Job ID</th>
+            <th>Job hash</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Completed</th>
+        </tr>
+        <tbody>
+        {% for job in done_jobs %}
+            <tr>
+                <td>{{ job.job_id }}</td>
+                <td>{{ job.token }}</td>
+                <td>{{ job.start_time }}</td>
+                <td>{{ job.end_time }}</td>
+                <td>{{ job.completed|tojson }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

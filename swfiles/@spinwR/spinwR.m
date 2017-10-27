@@ -40,7 +40,11 @@ classdef spinwR < handle
             end
             
             obj.spinw_obj = sw;
-            obj.login();
+            if isempty(obj.token)
+                obj.login();
+            else
+                obj.getToken(obj.token)
+            end
         end
         
         
@@ -50,13 +54,15 @@ classdef spinwR < handle
                 % Try make user. Catch existing user and get token.
                 [obj.username, password] = obj.GetAuthentication(varargin{:});
                 try
-                    % Make a new user
-                    obj.newUser(password)
+                    % Success
+                    url = strcat(obj.baseURL,'/users/quota');
+                    [~] = webread(url,weboptions('Username',obj.username,'Password',password,'ContentType','json'));
+                    obj.getToken(obj.username,password)
                 catch ME
                     % The user exists, get a token.
-                    if strcmp(ME.identifier,'MATLAB:webservices:HTTP409StatusCodeError')
+                    if strcmp(ME.identifier,'MATLAB:webservices:ContentTypeReaderError')
                         obj.status = 'User Exists';
-                        obj.getToken(password)
+                        obj.getToken(obj.username,password)
                     else
                         % Something has gone wrong.
                         obj.token = '';
@@ -93,7 +99,7 @@ classdef spinwR < handle
                 obj.username = varargin{2};
                 password = varargin{3};
             else
-                [Lusername, obj.username, password] = obj.GetAuthentication();
+                [Lusername, obj.username, password] = obj.register_GetAuthentication();
             end
             swpref.setpref('remoteuser',obj.username)
             url = strcat(obj.baseURL,'/users/register');
@@ -131,17 +137,19 @@ classdef spinwR < handle
             if isempty(varargin)
                 password = [];
             elseif length(varargin) == 1
-                password = varargin{1};
+                username = varargin{1};
+                password = 'token';
             elseif length(varargin) == 2
-                obj.username = varargin{1};
+                username = varargin{1};
                 password = varargin{2};
             end
             if isempty(password)
-                [obj.username, password] = obj.GetAuthentication();
+                [username, password] = obj.GetAuthentication();
+                obj.username = username;
             end
             url = strcat(obj.baseURL,'/users/token');
             try
-                temp = webread(url,weboptions('Username',obj.username,'Password',password,'ContentType','json'));
+                temp = webread(url,weboptions('Username',username,'Password',password,'ContentType','json'));
                 obj.token = temp.token;
                 obj.token_expire = datetime('now') + seconds(599);
             catch ME
@@ -149,6 +157,10 @@ classdef spinwR < handle
                 if strcmp(ME.identifier,'MATLAB:webservices:HTTP401StatusCodeError')
                     obj.token = '';
                     obj.newUser()
+                    % The token is not valid
+                elseif strcmp(ME.identifier,'MATLAB:webservices:ContentTypeReaderError')
+                    obj.token = '';
+                    obj.login()
                 else
                     obj.status = ME.message;
                     obj.token = '';
@@ -224,7 +236,7 @@ classdef spinwR < handle
                 'RequestMethod','post',...
                 'HeaderFields',string({'Content-Length',string(length(d))}),...
                 'ContentType','json',...
-                'Timeout',10);
+                'Timeout',15);
             try
                 tempOutput = webwrite(sprintf(strcat(url,'/%s%s'),remoteFName,remoteExt), d, opt);
             catch someException
@@ -272,7 +284,7 @@ classdef spinwR < handle
             end
             filename = strcat(tempname,'.mat');
             d = char(getByteStreamFromArray(sw_opt));
-
+            
             [~,remoteFName, remoteExt] = fileparts(filename);
             opt = weboptions('Username',obj.token,'Password','x',...
                 'characterEncoding','ISO-8859-1',...
@@ -384,7 +396,7 @@ classdef spinwR < handle
         end
         
         
-        function [username,email, password]=GetAuthentication(obj)
+        function [username,email, password]=register_GetAuthentication(obj)
             %GetAuthentication prompts a username and password from a user and hides the
             % password input by *****
             %
@@ -448,14 +460,14 @@ classdef spinwR < handle
             set(hAuth.fig,'CloseRequestFcn',@AbortAuthentication)
             set(hAuth.ePassword1,'KeypressFcn',@PasswordKeyPress1)
             set(hAuth.ePassword2,'KeypressFcn',@PasswordKeyPress2)
-
+            
             setappdata(0,'hAuth',hAuth);
             uicontrol(hAuth.eUsername);
             uiwait;
             
             username = get(hAuth.eUsername,'String');
             email = get(hAuth.eEmail,'String');
-           
+            
             delete(hAuth.fig);
             
             function ComfirmPassword(hObject,event)
@@ -504,6 +516,87 @@ classdef spinwR < handle
                 set(hAuth.eUsername,'String','');
                 set(hAuth.ePassword1,'UserData','');
                 set(hAuth.ePassword2,'UserData','');
+                uiresume;
+            end
+        end
+        
+        
+        function [username,password]=GetAuthentication(defaultuser)
+            %GetAuthentication prompts a username and password from a user and hides the
+            % password input by *****
+            %
+            %   [user,password] = GetAuthentication;
+            %   [user,password] = GetAuthentication(defaultuser);
+            %
+            % arguments:
+            %   defaultuser - string for default name
+            %
+            % results:
+            %   username - string for the username
+            %   password - password as a string
+            %
+            % Created by Felix Ruhnow, MPI-CBG Dresden
+            % Version 1.00 - 20th February 2009
+            %
+            
+            if nargin==0
+                defaultuser='';
+            end
+            
+            hAuth1.fig = figure('Menubar','none','Units','normalized','Resize','off','NumberTitle','off', ...
+                'Name','Authentication','Position',[0.4 0.4 0.2 0.2],'WindowStyle','normal');
+            
+            uicontrol('Parent',hAuth1.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0 0 1 1], ...
+                'FontSize',12);
+                       % Username
+            uicontrol('Parent',hAuth1.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.8 0.8 0.1], ...
+                'FontSize',12,'String','Username:','HorizontalAlignment','left');
+            
+            hAuth1.eUsername = uicontrol('Parent',hAuth1.fig,'Style','edit','Tag','username','Units','normalized','Position',[0.1 0.675 0.8 0.1], ...
+                'FontSize',12,'String',defaultuser.username,'BackGroundColor','white','HorizontalAlignment','left');
+                 
+            uicontrol('Parent',hAuth1.fig,'Style','text','Enable','inactive','Units','normalized','Position',[0.1 0.5 0.8 0.1], ...
+                'FontSize',12,'String','Password:','HorizontalAlignment','left');
+            
+            hAuth1.ePassword = uicontrol('Parent',hAuth1.fig,'Style','edit','Tag','password','Units','normalized','Position',[0.1 0.375 0.8 0.125], ...
+                'FontSize',12,'String','','BackGroundColor','white','HorizontalAlignment','left');
+            
+            uicontrol('Parent',hAuth1.fig,'Style','pushbutton','Tag','OK','Units','normalized','Position',[0.1 0.05 0.35 0.2], ...
+                'FontSize',12,'String','OK','Callback','uiresume;');
+            
+            uicontrol('Parent',hAuth1.fig,'Style','pushbutton','Tag','Cancel','Units','normalized','Position',[0.55 0.05 0.35 0.2], ...
+                'FontSize',12,'String','Cancel','Callback',@AbortAuthentication);
+            
+            set(hAuth1.fig,'CloseRequestFcn',@AbortAuthentication)
+            set(hAuth1.ePassword,'KeypressFcn',@PasswordKeyPress)
+            
+            setappdata(0,'hAuth1',hAuth1);
+            uicontrol(hAuth1.eUsername);
+            uiwait;
+            
+            username = get(hAuth1.eUsername,'String');
+            password = get(hAuth1.ePassword,'UserData');
+            delete(hAuth1.fig);
+            
+            function PasswordKeyPress(hObject,event)
+                hAuth = getappdata(0,'hAuth1');
+                password = get(hAuth.ePassword,'UserData');
+                switch event.Key
+                    case 'backspace'
+                        password = password(1:end-1);
+                    case 'return'
+                        uiresume;
+                        return;
+                    otherwise
+                        password = [password event.Character];
+                end
+                set(hAuth.ePassword,'UserData',password)
+                set(hAuth.ePassword,'String',char('*'*sign(password)))
+            end
+            function AbortAuthentication(hObject,event)
+                hAuth = getappdata(0,'hAuth1');
+                set(hAuth.eUsername,'String','');
+                set(hAuth.ePassword,'UserData','');
                 uiresume;
             end
         end

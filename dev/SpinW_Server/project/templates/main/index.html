@@ -1,14 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Compute Server</title>
-</head>
-<body>
-<h1>This is a remote compute server.</h1>
-<p>Current pages are:</p>
-<a href="/spinw"> SpinW server</a>
-<a href="/users/quota"> Get user quota</a>
-<a href="/users/jobs"> Get user jobs</a>
-</body>
-</html>
+{% extends "_base_new.html" %}
+{% block content %}
+    <div>
+      <h3>SpinW Server <span class="entypo-down-open"></span></h3>
+      <p>SpinW is a Matlab library that can plot and numerically simulate magnetic structures and excitations of given spin Hamiltonian using classical Monte Carlo simulation and linear spin wave theory.
+
+        <img src="https://github.com/tsdev/spinw/raw/master/spinw_logo.png" alt="SpinW Logo" align="middle" style="width:30%;display:block;">
+      </p>
+    </div>
+    <div>
+      <h3>Project 2 <span class="entypo-down-open"></span></h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus iste quia incidunt ad provident ullam quo assumenda expedita quae sapiente ipsa qui esse similique! Modi obcaecati natus sapiente quaerat omnis.</p>
+    </div>
+    <div>
+      <h3>Project 3 <span class="entypo-down-open"></span></h3>
+      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus iste quia incidunt ad provident ullam quo assumenda expedita quae sapiente ipsa qui esse similique! Modi obcaecati natus sapiente quaerat omnis.</p>
+    </div>
+
+{% endblock %}

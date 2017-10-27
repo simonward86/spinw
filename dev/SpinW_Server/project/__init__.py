@@ -7,10 +7,9 @@
 
 import os
 
-from flask import Flask
+from flask import Flask, render_template, g
 from flask_sqlalchemy import SQLAlchemy
-from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth, MultiAuth
-
+from flask_login import LoginManager, current_user
 ################
 #### config ####
 ################
@@ -39,10 +38,7 @@ _check_config_variables_are_set(config)
 #### extensions ####
 ####################
 
-# extensions
-basic_auth = HTTPBasicAuth()
-token_auth = HTTPTokenAuth('Bearer')
-multi_auth = MultiAuth(basic_auth, token_auth)
+login_manager = LoginManager(app)
 
 db = SQLAlchemy(app)
 
@@ -53,6 +49,17 @@ else:
     from project.deploy_conn import tcip
     eng = tcip.tcip(config.get('DEPLOY_SERVER'), config.get('DEPLOY_PORT'))
 
+
+####################
+#### flask-login ####
+####################
+login_manager.login_view = "user.login"
+login_manager.login_message_category = "danger"
+from project.models import User
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.filter(User.id == int(user_id)).first()
 
 ####################
 #### vairables  ####
@@ -79,3 +86,33 @@ from status import Status
 
 status_thread = Status(2)
 status_thread.start()
+
+
+####################
+#  context inject  #
+####################
+@app.context_processor
+def inject_data():
+    if 'views' in g:
+        return dict(user=current_user, views=g.views)
+    else:
+        return dict(user=current_user, views='Temp')
+
+
+########################
+#### error handlers ####
+########################
+
+@app.errorhandler(403)
+def forbidden_page(error):
+    return render_template("errors/403.html"), 403
+
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("errors/404.html"), 404
+
+
+@app.errorhandler(500)
+def server_error_page(error):
+    return render_template("errors/500.html"), 500

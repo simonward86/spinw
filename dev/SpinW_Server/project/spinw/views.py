@@ -3,7 +3,8 @@
 #################
 import json
 
-from flask import abort, request, g, Blueprint, url_for, send_from_directory
+from flask import abort, request, Blueprint, url_for, send_from_directory
+from flask_login import login_required, current_user
 import datetime
 import random
 import string
@@ -12,7 +13,7 @@ import sys
 from io import StringIO
 from pathlib import Path
 
-from project import db, config, multi_auth, eng, results, running
+from project import db, config, eng, results, running
 from project.models import UserJobs
 
 ################
@@ -42,9 +43,9 @@ def get_version():
 
 
 @spinw_blueprint.route('/spinw/status/<string:token>')
-@multi_auth.login_required
+@login_required
 def get_status(token):
-    user = g.user
+    user = current_user
     if not user:
         abort(400)
     job = user.jobs.filter_by(token=token).first()
@@ -77,7 +78,7 @@ def get_status(token):
 
 
 @spinw_blueprint.route("/spinw/status/download/<string:token>")
-@multi_auth.login_required
+@login_required
 def download_file(token):
     path = os.path.join(Path(__file__).parents[2], token)
     if os.path.isfile(path):
@@ -92,9 +93,9 @@ def download_file(token):
 
 
 @spinw_blueprint.route('/spinw/upload/<string:filename>', methods=['GET', 'POST'])
-@multi_auth.login_required
+@login_required
 def upload(filename):
-    user = g.user
+    user = current_user
     if request.method == 'POST':
         file = request.data
         extension = os.path.splitext(filename)[1]
@@ -120,7 +121,7 @@ def upload(filename):
 def compute_deployed(filename):
     if config.get('USE_PYMATLAB'):
         return abort(404)
-    user = g.user
+    user = current_user
     if request.method == 'POST':
         data = request.data
         extension = os.path.splitext(filename)[1]
@@ -142,9 +143,9 @@ def compute_deployed(filename):
         {'Calculating': True, 'Errors': False, 'status': url_for('spinw.get_status', token=token, _external=True)})
 
 @spinw_blueprint.route('/spinw/spinwave/<string:filename>', methods=['POST'])
-@multi_auth.login_required
+@login_required
 def compute_spinwave(filename):
-    user = g.user
+    user = current_user
     if request.method == 'POST':
         data = request.data
         extension = os.path.splitext(filename)[1]
@@ -189,9 +190,9 @@ def compute_spinwave(filename):
 
 
 @spinw_blueprint.route('/spinw/powspec/<string:filename>', methods=['POST'])
-@multi_auth.login_required
+@login_required
 def compute_powspec(filename):
-    user = g.user
+    user = current_user
     if request.method == 'POST':
         data = request.data
         extension = os.path.splitext(filename)[1]

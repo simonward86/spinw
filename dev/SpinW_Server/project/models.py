@@ -73,7 +73,7 @@ class User(db.Model, AutoSerialize):
 
     def __init__(self, username, password, email=None, admin=False, confirmed_on=None, confirmed=False):
         self.username = username
-        if config.get('USE_LDAP'):
+        if config.get(''):
             self.password_hash = None
         else:
             self.hash_password(password)
@@ -103,6 +103,19 @@ class User(db.Model, AutoSerialize):
         s = Serializer(config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': self.id}, salt=config['SECURITY_PASSWORD_SALT'])
         # return s.dumps({'id': self.id})
+
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        return self.id
 
     @staticmethod
     def verify_auth_token(token):
