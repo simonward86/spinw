@@ -10,8 +10,8 @@ function measfun(fun,argin,usemex,nMemSlice,nRun,fName)
 %
 
 result = [];
-header = sprintf('%-30s | %-15s | %-10s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s\n',...
-    'Function name','Speed (px/sec)','Time (s)','nQ','nMode','nWorker','nThread','nSlice','nRun','useMex');
+header = sprintf('%-30s | %-15s | %-10s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s\n',...
+    'Function name','Speed (px/sec)','Time (s)','nQ','nMode','nWorker','nThread','nSlice','nRun','useMex','hermit');
 
 if nargin < 2
     % print header
@@ -47,6 +47,10 @@ elseif nargin > 3
     end
     
     nQ = size(argin{2},2);
+    if nQ == 3
+        nQ = argin{2}(3);
+    end
+    
     if nargin > 3
         argin = [argin(:)' {'optmem' nMemSlice}];
     end
@@ -78,11 +82,12 @@ elseif nargin > 3
         pps   = round(pps*1e3)/1e3;
     end
     nMemSlice = spec.param.nSlice;
+    hermit    = spec.param.hermit;
     
     result.time     = tMeas;
     result.fun      = fun;
-    result.argin    = argin;
-    result.argout   = spec;
+    %result.argin    = argin;
+    %result.argout   = spec;
     result.usemex   = usemex;
     result.nQ       = nQ;
     result.nWorker  = nWorker;
@@ -91,6 +96,7 @@ elseif nargin > 3
     result.pps      = pps;
     result.nRun     = nRun;
     result.nMode    = nMode;
+    result.hermit   = hermit;
     % save result
     if exist(fName,'file')
         temp  = load(fName);
@@ -104,7 +110,7 @@ end
 
 for ii = 1:numel(result)
     rs       = result(ii);
-    mexstr   = {'0' '1'};
+    str01   = {'' 'x'};
     tMeasStr = err2str(mean(rs.time),std(rs.time));
     ppsStr   = err2str(mean(rs.pps),std(rs.pps));
     
@@ -114,8 +120,8 @@ for ii = 1:numel(result)
         nThreadStr = num2str(rs.nThread);
     end
     
-    fprintf('%-30s | %-15s | %-10s | %-7d | %-7d | %-7d | %-7s | %-7d | %-7d | %-7s\n',func2str(rs.fun),ppsStr,tMeasStr,...
-        rs.nQ,rs.nMode,rs.nWorker,nThreadStr,rs.nSlice,rs.nRun,mexstr{rs.usemex+1});
+    fprintf('%-30s | %-15s | %-10s | %-7d | %-7d | %-7d | %-7s | %-7d | %-7d | %-7s | %-7s\n',func2str(rs.fun),ppsStr,tMeasStr,...
+        rs.nQ,rs.nMode,rs.nWorker,nThreadStr,rs.nSlice,rs.nRun,str01{rs.usemex+1},str01{rs.hermit+1});
 end
 
 end
