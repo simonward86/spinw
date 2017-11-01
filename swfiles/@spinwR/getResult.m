@@ -45,4 +45,5 @@ if obj.version.Deployed
 else
     load(file,'-mat','spectra')
 end
+obj.isUploaded = false;
 end

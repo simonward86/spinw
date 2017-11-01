@@ -9,7 +9,7 @@ url = strcat(obj.baseURL,'/spinw/powspec');
 if (obj.version.Deployed)
     sw_opt = struct();
     sw_opt.fun = 'powspec';
-    sw_opt.argin = {obj.spinw_obj,hkl,varargin{:}};
+    sw_opt.argin = {obj.toSpinw,hkl,varargin{:}};
     sw_opt.nargout = 1;
 else
     if ~obj.version.Deployed &&  ~obj.isUploaded

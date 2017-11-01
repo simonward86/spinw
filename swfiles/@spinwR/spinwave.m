@@ -1,4 +1,4 @@
-function spinwave(obj,hkl,varargin)
+function spectra = spinwave(obj,hkl,varargin)
 if isempty(obj.token)
     error('You need to login')
 end
@@ -11,7 +11,7 @@ filename = strcat(tempname,'.mat');
 if (obj.version.Deployed)
     sw_opt = struct();
     sw_opt.fun = 'spinwave';
-    sw_opt.argin = {obj.spinw_obj,hkl,varargin{:}};
+    sw_opt.argin = {obj.toSpinw,hkl,varargin{:}};
     sw_opt.nargout = 1;
 else
     if ~obj.version.Deployed &&  ~obj.isUploaded
@@ -53,4 +53,5 @@ if tempOutput.Calculating && ~tempOutput.Errors
         obj.isCalculating = true;
     end
 end
-end
+
+

@@ -7,7 +7,7 @@ if (obj.token_expire - datetime('now')) < 0
 end
 url = strcat(obj.baseURL,'/spinw/upload');
 filename = strcat(tempname,'.mat');
-d = char(getByteStreamFromArray(obj.spinw_obj));
+d = char(getByteStreamFromArray(obj.sw_obj));
 
 [~,remoteFName, remoteExt] = fileparts(filename);
 opt = weboptions('Username',obj.token,'Password','x',...
