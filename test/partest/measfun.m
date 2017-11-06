@@ -1,4 +1,4 @@
-function measfun(fun,argin,usemex,nMemSlice,nRun,fName)
+function measfun(fun,argin,usemex,nMemSlice,nRun,nThread,nWorker,fName)
 % measure function execution time
 %
 % `measfun(fun,argin,usemex,nMeMSlice,nRun,fName)` time the function
@@ -13,33 +13,57 @@ result = [];
 header = sprintf('%-30s | %-15s | %-10s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s | %-7s\n',...
     'Function name','Speed (px/sec)','Time (s)','nQ','nMode','nWorker','nThread','nSlice','nRun','useMex','hermit');
 
-if nargin < 2
+if nargin < 3
     % print header
     fprintf(header);
-end
-
-if nargin == 1
     % read the data
     % just print the data
-    temp = load(fun);
-    fn = fieldnames(temp);
-    result = temp.(fn{1});
-    
+    if nargin>0
+        if ischar(fun)
+            temp = load(fun);
+            fn = fieldnames(temp);
+            result = temp.(fn{1});
+        else
+            result = fun;
+        end
+    end
+    if nargin>1
+        % sort column
+        col      = argin;
+        sortmode = 'ascend';
+        if col(1)=='+'
+            col = col(2:end);
+        elseif col(1)=='-'
+            sortmode = 'descend';
+            col = col(2:end);
+        end
+        
+        [~,idx] = sort(cellfun(@(C)mean(C),{result.(col)}),sortmode);
+        result = result(idx);
+    end
 elseif nargin > 3
     % do the measurement
-    
-    nThread = getenv('OMP_NUM_THREADS');
-    nThread = str2double(nThread);
-    if isempty(nThread) || isnan(nThread)
-        nThread = -1;
+    if nThread > 0
+        setenv('OMP_NUM_THREADS',num2str(nThread));
+    else
+        setenv('OMP_NUM_THREADS','');
     end
     
+    swpref.setpref('tid',0,'fid',0);
     % check parallel pool
     pPool = gcp('nocreate');
     if isempty(pPool)
-        nWorker = 1;
+        nWorker0 = 1;
     else
-        nWorker = pPool.NumWorkers;
+        nWorker0 = pPool.NumWorkers;
+    end
+    
+    if nWorker0~=nWorker
+        % restart pool
+        evalc('delete(gcp(''nocreate''))');
+        if nWorker>1
+            evalc(['parpool(' num2str(nWorker) ')']);
+        end
     end
     
     if iscell(argin{2})
@@ -98,14 +122,17 @@ elseif nargin > 3
     result.nMode    = nMode;
     result.hermit   = hermit;
     % save result
-    if exist(fName,'file')
-        temp  = load(fName);
-        result = [temp.result(:)' result];
-        save(fName,'result');
-    else
-        save(fName,'result');
+    if ~isempty(fName)
+        if exist(fName,'file')
+            temp  = load(fName);
+            result = [temp.result(:)' result];
+            save(fName,'result');
+        else
+            save(fName,'result');
+        end
+        result = result(end);
     end
-    result = result(end);
+
 end
 
 for ii = 1:numel(result)
