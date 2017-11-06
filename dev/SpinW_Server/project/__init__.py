@@ -105,14 +105,21 @@ def inject_data():
 
 @app.errorhandler(403)
 def forbidden_page(error):
+    g.views = '403 Error'
     return render_template("errors/403.html"), 403
 
+@app.errorhandler(401)
+def forbidden_page(error):
+    g.views = '401 Error'
+    return render_template("errors/401.html"), 401
 
 @app.errorhandler(404)
 def page_not_found(error):
+    g.views = '404 Error'
     return render_template("errors/404.html"), 404
 
 
 @app.errorhandler(500)
 def server_error_page(error):
+    g.views = '500 Error'
     return render_template("errors/500.html"), 500

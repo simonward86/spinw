@@ -29,21 +29,21 @@
       <li>
         <a href="{{ url_for('main.home')}}" data-title="Apps">Apps</a>
       </li>
-      <li>
-        <a href="javascript:void(0);" data-title="Team">Team</a>
-      </li>
-      <li>
-        <a href="javascript:void(0);" data-title="Diary">Diary</a>
-      </li>
+{#      <li>#}
+{#        <a href="javascript:void(0);" data-title="Team">Team</a>#}
+{#      </li>#}
+{#      <li>#}
+{#        <a href="javascript:void(0);" data-title="Diary">Diary</a>#}
+{#      </li>#}
       <li>
         <a href="{{ url_for('user.job_list')}}" data-title="Jobs">Jobs</a>
       </li>
       <li>
         <a href="javascript:void(0);" data-title="Settings">Settings</a>
       </li>
-      <li>
-        <a href="javascript:void(0);" data-title="Search">Search</a>
-      </li>
+{#      <li>#}
+{#        <a href="javascript:void(0);" data-title="Search">Search</a>#}
+{#      </li>#}
     </ul>
   </nav>
 </header>
@@ -63,10 +63,10 @@
   flex: 1;
   -webkit-flex: 1;
   -ms-flex: 1;">{{ views }}</h2>
-      {% if user is none %}
-          <a href="{{ url_for('user.login') }}" style="text-align: right">Hello !</a>
-      {% else %}
+      {% if user.is_authenticated %}
           <a href="{{ url_for('user.user_home') }}" style="text-align: right">Hello {{ user.username }}!</a>
+      {% else %}
+          <a href="{{ url_for('user.login') }}" style="text-align: right">Hello !</a>
       {% endif %}
   </div>
 {#    <div class="container">#}

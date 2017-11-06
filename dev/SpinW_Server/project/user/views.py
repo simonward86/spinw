@@ -55,6 +55,10 @@ def verify_token(token):
     user = User.verify_auth_token(token)
     return user
 
+@login_manager.unauthorized_handler
+def send_unauth():
+    abort(403)
+
 ################
 #### route  ####
 ################
