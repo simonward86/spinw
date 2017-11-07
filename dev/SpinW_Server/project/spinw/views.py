@@ -178,7 +178,7 @@ def compute_spinwave(filename):
         cmd['toFile'] = str(random.randint(1000, 10000))
         job.start_time = datetime.datetime.now()
         job.running = True
-        results[token] = eng.spinwavefast(running[token], Q, cmd, 'nWorker', 32, async=True, stdout=out_pipe, stderr=err_pipe)
+        results[token] = eng.spinwavefast(running[token], Q, cmd, async=True, stdout=out_pipe, stderr=err_pipe)
     else:
         job.start_time = datetime.datetime.now()
         job.running = True
