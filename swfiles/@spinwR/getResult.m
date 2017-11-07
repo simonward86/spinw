@@ -4,7 +4,7 @@ if isempty(obj.token)
     error('You need to login')
 end
 if (obj.token_expire - datetime('now')) < 0
-    obj = obj.getToken();
+    obj.getToken();
 end
 if isempty(varargin)
     timeout = 1;

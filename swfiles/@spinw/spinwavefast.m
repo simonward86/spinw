@@ -314,7 +314,7 @@ end
 hPool = gcp('nocreate'); % If no pool, do not create new one.
 if isempty(hPool)
     nwSlice = 1;
-    runPar  = 0;
+    runPar  = 0;    
 else
     nwSlice = hPool.NumWorkers;
     runPar  = nwSlice;
@@ -337,7 +337,7 @@ hkl = obj.unit.qmat*hkl;
 % Calculates momentum transfer in A^-1 units.
 % hklA = 2*pi*(hkl'/obj.basisvector)';
 if param.nWorker>0
-    hklA        = Composite();
+    hklA        = Composite(runPar);
     hklA{1}     = 2*pi*(hkl'/obj.basisvector)';
     hklA(2:end) = {[]};
 else
@@ -603,7 +603,7 @@ hklIdx2 = arrayfun(@(a,b) unique(ceil(linspace(a,b,nwSlice+1))),hklIdx_temp(1:en
 
 % Empty omega dispersion of all spin wave modes, size: 2*nMagExt x nHkl.
 if runPar
-    omega = Composite();
+    omega = Composite(runPar);
     if incomm
         omega{1} = zeros(3*nMagExt,nHkl);
     else
@@ -635,7 +635,7 @@ if param.formfact
     % TODO check prod(nExt)? instead of nExt
     %FF = repmat(param.formfactfun(permute(obj.unit_cell.ff(1,:,obj.matom.idx),[3 2 1]),hklA0),[1 nExt]);
     if runPar
-        FF = Composite();
+        FF = Composite(runPar);
         FF{1} = repmat(param.formfactfun(permute(obj.unit_cell.ff(1,:,obj.matom.idx),[3 2 1]),hklA0),[prod(nExt) 1]);
         FF(2:end) = {[]};
     else
@@ -646,7 +646,7 @@ else
 end
 
 if runPar
-    Sperp = Composite();
+    Sperp = Composite(runPar);
     if incomm
         Sperp{1} = zeros(nMagExt*3,nHkl);
     else
