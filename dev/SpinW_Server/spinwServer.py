@@ -1,35 +1,8 @@
-import os
 from project import app, db
 from project.models import User, UserJobs
 import datetime
 
-# @manager.command
-# def test():
-#     """Runs the unit tests without coverage."""
-#     tests = unittest.TestLoader().discover('tests')
-#     result = unittest.TextTestRunner(verbosity=2).run(tests)
-#     if result.wasSuccessful():
-#         return 0
-#     else:
-#         return 1
-#
-#
-# @manager.command
-# def cov():
-#     """Runs the unit tests with coverage."""
-#     tests = unittest.TestLoader().discover('tests')
-#     unittest.TextTestRunner(verbosity=2).run(tests)
-#     COV.stop()
-#     COV.save()
-#     print('Coverage Summary:')
-#     COV.report()
-#     basedir = os.path.abspath(os.path.dirname(__file__))
-#     covdir = os.path.join(basedir, 'tmp/coverage')
-#     COV.html_report(directory=covdir)
-#     print('HTML version: file://%s/index.html' % covdir)
-#     COV.erase()
-#
-#
+
 @app.cli.command('create')
 def create_db():
     """Creates the db tables."""
@@ -64,14 +37,5 @@ def create_admin():
 
 
 if __name__ == '__main__':
-    # from project.models import UserJobs, User
-    # from manage import create_db, create_admin
-    # if app.config['SQLALCHEMY_DATABASE_URI'] is 'sqlite:///:memory:':
-    #     create_db()
-    #     create_admin()
-    # else:
-    #     if not os.path.exists(app.config['SQLALCHEMY_DATABASE_URI'].split('///')[1]):
-    #         create_db()
-    #         create_admin()
 
     app.run(debug=True)

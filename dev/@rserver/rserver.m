@@ -85,7 +85,11 @@ classdef rserver < handle
                 obj.username = varargin{2};
                 password = varargin{3};
             else
-                [Lusername, obj.username, password] = obj.register_GetAuthentication();
+                try
+                    [Lusername, obj.username, password] = obj.register_GetAuthentication();
+                catch someException
+                    throw(addCause(MException('registerToSpinW:unableToRegister','Unable to register, action canceled.'),someException));
+                end
             end
             swpref.setpref('remoteuser',obj.username)
             url = strcat(obj.baseURL,'/users/register');

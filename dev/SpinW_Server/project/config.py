@@ -34,7 +34,7 @@ class BaseConfig(object):
     USE_LDAP = False
     USE_PYMATLAB = True
     DEPLOY_PATH='/MATLAB/mtools/SpinW_Dev/spinw/dev/server/Linux/spinw_server_linux.sh'
-    DEPLOY_CORES = 1
+    CORES = 1
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
@@ -42,6 +42,26 @@ class DevelopmentConfig(BaseConfig):
     DEPLOY_PORT = 13001
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
     TOKEN_DURATION = 600  # This is 10 minutes
+    DEBUG = True
+
+class RALConfig(BaseConfig):
+    CORES = 32
+    DEPLOY_SERVER= '127.0.0.1'
+    DEPLOY_PORT = 13001
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+    DEPLOY_PATH = '/home/sbp35145/MATLAB/spinw/dev/SpinW_Server'
+    TOKEN_DURATION = 3600  # This is 1 hour
+    USE_PYMATLAB = False
+    DEBUG = True
+
+class gLiteConfig(BaseConfig):
+    CORES = 1
+    DEPLOY_SERVER= '0.0.0.0'
+    DEPLOY_PATH = '/home/ward_s/MATLAB/spinw/dev/SpinW_Server'
+    DEPLOY_PORT = 80
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
+    TOKEN_DURATION = 3600  # This is 1 hour
+    USE_PYMATLAB = False
     DEBUG = True
 
 class TestingConfig(BaseConfig):

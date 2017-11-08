@@ -21,7 +21,7 @@ class tcip:
     def connect(self):
         if not self.is_connected:
             self.process = Popen([config.get('DEPLOY_PATH'),os.path.join(Path(__file__).parents[2],
-                                    config.get('UPLOAD_FOLDER')), str(config.get('DEPLOY_CORES')), str(self.port)])
+                                    config.get('UPLOAD_FOLDER')), str(config.get('CORES')), str(self.port)])
             atexit.register(self.process.terminate)
             time.sleep(5)
             self.socket.connect((self.host, self.port))
