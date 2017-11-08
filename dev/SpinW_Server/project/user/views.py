@@ -161,21 +161,44 @@ def get_quota():
     return json.dumps({'used': user.quota_used, 'total': user.quota_total})
 
 
-@user_blueprint.route("/users/jobs")
+@user_blueprint.route("/users/jobs",methods=["GET","POST"])
 @login_required
 def job_list():
-    g.views = "Job Monitor"
-    running_jobs = list(map(lambda x: x.get_public(),
+    if request.method == "GET":
+        best = request.accept_mimetypes.best_match(['application/json', 'text/html'])
+        running_jobs = list(map(lambda x: x.get_public(),
                             db.session.query(UserJobs).filter(UserJobs.completed == False,
                                                               UserJobs.running == True,
                                                               UserJobs.user_id == current_user.id
                                                               ).order_by(UserJobs.start_time).all()))
-    done_jobs = list(map(lambda x: x.get_public(),
+        done_jobs = list(map(lambda x: x.get_public(),
                          db.session.query(UserJobs).filter(UserJobs.completed == True,
                                                            UserJobs.running == False,
                                                            UserJobs.user_id == current_user.id
                                                            ).order_by(UserJobs.start_time).all()))
-    return render_template('user/job_table.html', running_jobs=running_jobs, done_jobs=done_jobs)
+        if best in 'text/html':
+            g.views = "Job Monitor"
+            return render_template('user/job_table.html', running_jobs=running_jobs, done_jobs=done_jobs)
+        else:
+            waiting_jobs = list(map(lambda x: x.get_public(),
+                                db.session.query(UserJobs).filter(UserJobs.completed == False,
+                                                                  UserJobs.running == False,
+                                                                  UserJobs.user_id == current_user.id
+                                                                  ).order_by(UserJobs.start_time).all()))
+            return json.dumps({"Waiting":waiting_jobs,"Running":running_jobs,'Completed':done_jobs})
+    else:
+        job = request.json.get('job_id')
+        action = request.json.get('action')
+        if job is None:
+            abort(400)
+        got_job = db.session.query(UserJobs).filter(UserJobs.job_id == job,UserJobs.user_id == current_user.id).order_by(UserJobs.start_time).all()
+        if got_job is None:
+            abort(400)
+        if action is None:
+            json.dumps(got_job.get_public)
+        elif action == 'delete':
+            got_job.delete(synchronize_session=False)
+            db.session.commit()
 
 
 @user_blueprint.route("/users")

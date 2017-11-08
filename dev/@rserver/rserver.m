@@ -119,6 +119,17 @@ classdef rserver < handle
             quota = webread(url,weboptions('Username',obj.token,'ContentType','json'));
         end
         
+        function jobs = getJobs(obj)
+            url = strcat(obj.baseURL,'/users/jobs');
+            if isempty(obj.token)
+                error('You need to login')
+            end
+            if (obj.token_expire - datetime('now')) < 0
+                obj = obj.getToken();
+            end
+            jobs = webread(url,weboptions('Username',obj.token,'ContentType','json'));
+        end
+        
         function getToken(obj,varargin)
             if isempty(varargin)
                 password = [];

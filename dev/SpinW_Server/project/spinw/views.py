@@ -81,6 +81,7 @@ def get_status(token):
 @login_required
 def download_file(token):
     path = os.path.join(Path(__file__).parents[2], token)
+    print(path)
     if os.path.isfile(path):
         return send_from_directory(directory=Path(__file__).parents[2], filename=token)
     else:
