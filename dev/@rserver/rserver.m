@@ -113,7 +113,7 @@ classdef rserver < handle
                 error('You need to login')
             end
             if (obj.token_expire - datetime('now')) < 0
-                obj = obj.getToken();
+                obj.getToken();
             end
             url = strcat(obj.baseURL,'/users/quota');
             quota = webread(url,weboptions('Username',obj.token,'ContentType','json'));
@@ -125,9 +125,21 @@ classdef rserver < handle
                 error('You need to login')
             end
             if (obj.token_expire - datetime('now')) < 0
-                obj = obj.getToken();
+                obj.getToken();
             end
             jobs = webread(url,weboptions('Username',obj.token,'ContentType','json'));
+        end
+        
+        
+        function jobs = killJob(obj,job_id)
+            url = strcat(obj.baseURL,'/users/jobs');
+            if isempty(obj.token)
+                error('You need to login')
+            end
+            if (obj.token_expire - datetime('now')) < 0
+                obj.getToken();
+            end
+            temp = webwrite(url,'job_id',job_id,'action','delete',weboptions('Username',obj.token,'ContentType','json'));
         end
         
         function getToken(obj,varargin)

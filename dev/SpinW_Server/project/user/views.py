@@ -187,8 +187,12 @@ def job_list():
                                                                   ).order_by(UserJobs.start_time).all()))
             return json.dumps({"Waiting":waiting_jobs,"Running":running_jobs,'Completed':done_jobs})
     else:
-        job = request.json.get('job_id')
-        action = request.json.get('action')
+        if request.json is None:
+            job = request.form.get('job_id')
+            action = request.form.get('action')
+        else:
+            job = request.json.get('job_id')
+            action = request.json.get('action')
         if job is None:
             abort(400)
         got_job = db.session.query(UserJobs).filter(UserJobs.job_id == job,UserJobs.user_id == current_user.id).order_by(UserJobs.start_time).all()
@@ -197,9 +201,9 @@ def job_list():
         if action is None:
             json.dumps(got_job.get_public)
         elif action == 'delete':
-            got_job.delete(synchronize_session=False)
+            db.session.query(UserJobs).filter(UserJobs.job_id == job, UserJobs.user_id == current_user.id).delete(synchronize_session=False)
             db.session.commit()
-
+            return json.dumps({"message": 'Deleted job %s'%job, "success": True})
 
 @user_blueprint.route("/users")
 @login_required
