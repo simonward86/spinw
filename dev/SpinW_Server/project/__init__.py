@@ -46,9 +46,6 @@ if config.get('USE_PYMATLAB'):
     import matlab.engine
     eng = matlab.engine.start_matlab()
     eng.addpath(eng.genpath(config.get('DEPLOY_PATH')))
-    cores = config.get('CORES')
-    if cores > 1:
-        eng.parpool(cores)
 
 else:
     from project.deploy_conn import tcip

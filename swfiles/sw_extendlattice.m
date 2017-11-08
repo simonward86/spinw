@@ -82,7 +82,7 @@ if nargin < 3
 end
 
 % loop over all field names of SS
-fNameV = fields(SS);
+fNameV = fieldnames(SS);
 SSext = struct;
 
 % additional atom index for bonds [1 1 nCell*nAtom]

@@ -190,6 +190,7 @@ def compute_spinwave(filename):
         cmd['toFile'] = str(random.randint(1000, 10000))
         job.start_time = datetime.datetime.now()
         job.running = True
+        start_Parallel()
         results[token] = eng.spinwavefast(running[token], Q, cmd, async=True, stdout=out_pipe, stderr=err_pipe)
     else:
         job.start_time = datetime.datetime.now()
@@ -249,6 +250,7 @@ def compute_powspec(filename):
         cmd['toFile'] = str(random.randint(1000, 10000))
         job.start_time = datetime.datetime.now()
         job.running = True
+        start_Parallel()
         results[token] = eng.powspecfast(running[token], Q, cmd, async=True, stdout=out_pipe, stderr=err_pipe)
     else:
         job.start_time = datetime.datetime.now()
@@ -258,3 +260,10 @@ def compute_powspec(filename):
     db.session.commit()
     return json.dumps(
         {'Calculating': True, 'Errors': False, 'status': url_for('get_status', token=token, _external=True)})
+
+
+def start_Parallel():
+    cores = config.get('CORES')
+    if cores > 1:
+        if eng.isempty(eng.gcp('nocreate')):
+            eng.parpool(cores)

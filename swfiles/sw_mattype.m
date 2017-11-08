@@ -45,6 +45,7 @@ if nargin == 1 && ~isa(mat,'sym')
     epsilon = max(1e-6*max(mat(:)),1e-10);
 end
 
+mSize = zeros(1,3);
 [mSize(1), mSize(2), mSize(3)] = size(mat);
 type = zeros(1,mSize(3));
 
