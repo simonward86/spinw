@@ -26,7 +26,7 @@ else
         end
     end
 end
-filename = strcat(tempname,'.mat');
+filename = strcat(obj.upload_token,'.mat');
 d = char(getByteStreamFromArray(sw_opt));
 
 [~,remoteFName, remoteExt] = fileparts(filename);

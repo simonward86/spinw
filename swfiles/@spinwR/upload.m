@@ -33,4 +33,9 @@ end
 obj.status = 'Uploaded File';
 obj.statusURL = upload_data.status;
 obj.isUploaded = true;
+
+try
+    obj.upload_token = obj.statusURL(end-7:end);
+end
+
 end

@@ -5,6 +5,8 @@ classdef spinwR < spinw & rserver
     properties(Hidden=true)
         sw_obj
         listners = {}
+        upload_token = ''
+        
     end
     
     methods

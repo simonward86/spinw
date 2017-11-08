@@ -7,7 +7,6 @@ if (obj.token_expire - datetime('now')) < 0
 end
 
 url = strcat(obj.baseURL,'/spinw/spinwave');
-filename = strcat(tempname,'.mat');
 if (obj.version.Deployed)
     sw_opt = struct();
     sw_opt.fun = 'spinwave';
@@ -28,6 +27,9 @@ else
         end
     end
 end
+
+filename = strcat(obj.upload_token,'.mat');
+
 d = char(getByteStreamFromArray(sw_opt));
 
 [~,remoteFName, remoteExt] = fileparts(filename);

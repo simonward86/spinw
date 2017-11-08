@@ -73,7 +73,7 @@ def get_status(token):
             e = sys.exc_info()[0]
             if config.get('USE_PYMATLAB'):
                 results[token].cancel()
-            return_obj["status"] = str(e)
+            return_obj["status"] = 'Internal Error'
     return json.dumps(return_obj)
 
 
@@ -81,7 +81,6 @@ def get_status(token):
 @login_required
 def download_file(token):
     path = os.path.join(Path(__file__).parents[2], token)
-    print(path)
     if os.path.isfile(path):
         return send_from_directory(directory=Path(__file__).parents[2], filename=token)
     else:
@@ -153,7 +152,19 @@ def compute_spinwave(filename):
         if extension != ".mat":
             abort(400)
         if config.get('USE_PYMATLAB'):
-            job = user.jobs.filter(UserJobs.completed == False, UserJobs.running == False).order_by(UserJobs.upload_time)[0]
+            job = user.jobs.filter(UserJobs.completed == False,
+                                   UserJobs.running == False,
+                                   UserJobs.token == os.path.splitext(filename)[0]).all()
+            if job is None:
+                abort(400)
+            else:
+                job = job[0]
+
+            if os.path.splitext(filename)[0] not in running:
+                db.session.query(UserJobs).filter(UserJobs.token == os.path.splitext(filename)[0],
+                                                  UserJobs.user_id == current_user.id).delete(synchronize_session=False)
+                db.session.commit()
+                abort(400)
         else:
             token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
             job = UserJobs(token)
@@ -200,7 +211,18 @@ def compute_powspec(filename):
         if extension != ".mat":
             abort(400)
         if config.get('USE_PYMATLAB'):
-            job = user.jobs.filter(UserJobs.completed == False, UserJobs.running == False).order_by(UserJobs.upload_time)[0]
+            job = user.jobs.filter(UserJobs.completed == False,
+                                   UserJobs.running == False,
+                                   UserJobs.token == os.path.splitext(filename)[0]).all()
+            if job is None:
+                abort(400)
+            else:
+                job = job[0]
+            if os.path.splitext(filename)[0] not in running:
+                db.session.query(UserJobs).filter(UserJobs.token == os.path.splitext(filename)[0],
+                                                  UserJobs.user_id == current_user.id).delete(synchronize_session=False)
+                db.session.commit()
+                abort(400)
         else:
             token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(8))
             job = UserJobs(token)

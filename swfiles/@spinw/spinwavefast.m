@@ -1059,7 +1059,7 @@ end
 fprintf0(fid,'Calculation finished.\n');
 
 if isa(warn1,'Composite')
-    warn1 = any(warn1{:});
+    warn1 = any([warn1{:}]);
 end
 
 if warn1 && ~param.fitmode
