@@ -1,6 +1,9 @@
-Flask_HTTPAuth==3.2.3
 passlib==1.7.1
+Flask_SQLAlchemy==2.3.1
+Flask_WTF==0.14.2
+Flask_Login==0.4.0
+WTForms==2.1
 Flask==0.12
 itsdangerous==0.24
-pyldap==2.4.37
+python_ldap==2.4.45
 matlab==0.1
