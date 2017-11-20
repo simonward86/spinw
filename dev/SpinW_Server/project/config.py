@@ -51,7 +51,7 @@ class RALConfig(BaseConfig):
     DEPLOY_SERVER= '127.0.0.1'
     DEPLOY_PORT = 13001
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
-    DEPLOY_PATH = '/home/sbp35145/MATLAB/spinw/dev/SpinW_Server'
+    DEPLOY_PATH = '/home/sbp35145/MATLAB/spinw/'
     TOKEN_DURATION = 3600  # This is 1 hour
     USE_PYMATLAB = True
     DEBUG = True
@@ -60,7 +60,7 @@ class gLiteConfig(BaseConfig):
     CORES = 1
     DEPLOY_SERVER= '127.0.0.1'
     DEPLOY_PORT = 13001
-    DEPLOY_PATH = '/home/ward_s/MATLAB/spinw/dev/SpinW_Server'
+    DEPLOY_PATH = '/home/ward_s/MATLAB/spinw/'
     DEPLOY_PORT = 80
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'db.sqlite')
     USE_PYMATLAB = True
