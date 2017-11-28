@@ -218,7 +218,7 @@ inpForm.defval = [inpForm.defval {[]         0     0      1e-5      'xyz'}];
 inpForm.size   = [inpForm.size   {[3 -7 -6] [1 1] [1 1]  [1 1]     [1 -5]}];
 inpForm.soft   = [inpForm.soft   {true      true  false  false     false }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if isempty(param.k)
     noK = true;
@@ -289,7 +289,7 @@ if nMagAtom==0
 end
 
 % Create mAtom.Sext matrix.
-mAtom    = sw_extendlattice(nExt, mAtom);
+mAtom    = s_extendlattice(nExt, mAtom);
 
 % normalized axis of rotation, size (nK,3)
 if isnan(param.n(1))
@@ -428,9 +428,9 @@ switch param.mode
             incomm = mod(bsxfun(@times,k,nExt),1);
             incomm = any(incomm(:));
             if incomm
-                S1 = sw_nvect(S);
+                S1 = s_nvect(S);
             else
-                S1 = sw_nvect(real(S));
+                S1 = s_nvect(real(S));
             end
             
             % Axis of rotation defined by the spin direction
@@ -443,7 +443,7 @@ switch param.mode
             phi = param.phi(1);
         end
         % Rotate the spins.
-        S = sw_rot(nRot,phi,S);
+        S = s_rot(nRot,phi,S);
         k = obj.mag_str.k';
         
     case 'func'

@@ -18,7 +18,7 @@ newline = char(10);
 % remove old SpinW installation from path
 fprintf('\nRemoving path to old SpinW installation if exists!\n')
 try %#ok<TRYNC>
-    rmpath(genpath(sw_rootdir));
+    rmpath(genpath(s_rootdir));
 end
 
 % find SpinW folder

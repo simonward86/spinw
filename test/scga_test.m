@@ -50,8 +50,8 @@ axis([1e-2 1e2 1 3.5])
 
 %% Calculate diffuse scattering
 
-Q1 = sw_qgrid('u',[1 0 0],'v',[0 1 0],'bin',{[0 0.01 4] [-1 0.01 4]});
-Q2 = sw_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.01 4] [-1 0.01 4]});
+Q1 = s_qgrid('u',[1 0 0],'v',[0 1 0],'bin',{[0 0.01 4] [-1 0.01 4]});
+Q2 = s_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.01 4] [-1 0.01 4]});
 
 spec1 = pyro.scga(Q1,'T',1/200,'sublat',repmat(1:4,1,4));
 spec2 = pyro.scga(Q2,'T',1/200,'sublat',repmat(1:4,1,4));
@@ -101,7 +101,7 @@ set(gcf,'Position',[fPos(1:2) 584 431])
 
 %% do the different cuts
 
-Q3 = sw_qgrid('u',[1 0 0],'v',[0 0 1],'bin',{[0 0.01 4] [0 0.2 2]});
+Q3 = s_qgrid('u',[1 0 0],'v',[0 0 1],'bin',{[0 0.01 4] [0 0.2 2]});
 spec3 = pyro.scga(Q3,'T',1/20,'sublat',repmat(1:4,1,4),'plot',false);
 spec3.lambda
 
@@ -160,7 +160,7 @@ FT2-FT3
 
 %% high temperature solution
 
-kbT = sw_converter(1,'K','meV');
+kbT = s_converter(1,'K','meV');
 beta = 1/kbT;
 
 lambda = 3;
@@ -172,7 +172,7 @@ D  = 3;
 % FT
 N  = round(nQ0^(1/D));
 nQ = N^D;
-BZ = sw_qgrid('mat',eye(3),'bin',repmat({linspace(0,1,N)},1,D));
+BZ = s_qgrid('mat',eye(3),'bin',repmat({linspace(0,1,N)},1,D));
 
 FT = pyro.fourier(reshape(BZ,3,[]));
 FT = FT.ft;
@@ -248,8 +248,8 @@ J    = 20;
 
 lambda = fminsearch(@(lambda)abs(sumn(1./(lambda+beta*J*D),[1 2])/size(D,2)/4-1/3),3);
 
-Q = sw_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
-%Q = sw_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
+Q = s_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
+%Q = s_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
 nQ = numel(Q)/3;
 
 FT = pyro.fourier(reshape(Q,3,[]));
@@ -317,8 +317,8 @@ end
 
 pyro.setunit('mode','1')
 
-%Q = sw_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
-Q = sw_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
+%Q = s_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
+Q = s_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
 
 betaJ = 100;
 %betaJ = 10.^linspace(-5,5,31);
@@ -372,7 +372,7 @@ else
     nSub = nMag;
 end
 
-BZ   = sw_qgrid('bin',{[0 0.1 2] [0 0.1 2] 0.3});
+BZ   = s_qgrid('bin',{[0 0.1 2] [0 0.1 2] 0.3});
 sQBZ = num2cell(size(BZ));
 nQBZ = numel(BZ)/3;
 chi0 = pyro.fourier(reshape(BZ,3,[]),'extend',false);
@@ -415,7 +415,7 @@ omega = reshape(omega',sQBZ{2:end},nSub);
 
 %% simple eig
 
-BZ   = sw_qgrid('bin',{[1 0.1 3] [1 0.1 3] 0.25});
+BZ   = s_qgrid('bin',{[1 0.1 3] [1 0.1 3] 0.25});
 sQBZ = num2cell(size(BZ));
 nQBZ = numel(BZ)/3;
 chi0 = pyro.fourier(reshape(BZ,3,[]),'extend',false);
@@ -449,8 +449,8 @@ ybti = spinw('~/Documents/structures/Yb2Ti2O7/Yb2Ti2O7_cryst.cif');
 
 ybti.setunit('mode','1')
 ybti.quickham(1);
-%Q = sw_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
-Q = sw_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
+%Q = s_qgrid('bin',{[0 0.02 4] 0 [-1 0.02 4]});
+Q = s_qgrid('u',[1 1 0],'v',[0 0 1],'bin',{[0 0.02 3] [-1 0.02 4]});
 
 betaJ = 100;
 %betaJ = 10.^linspace(-2,2,31);

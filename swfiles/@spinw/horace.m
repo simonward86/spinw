@@ -70,7 +70,7 @@ function [w, s] = horace(obj, qh, qk, ql, varargin)
 %   the value of the param option will be forwarded. For user
 %   functions with variable number of arguments, all input options
 %   of `spinw.horace` will be forwarded. In this case it is recommended
-%   to use [sw_readparam] function to handle the variable number
+%   to use [s_readparam] function to handle the variable number
 %   arguments within `func()`.
 % 
 % `'parfunc'`
@@ -114,7 +114,7 @@ function [w, s] = horace(obj, qh, qk, ql, varargin)
 % 
 % ### See Also
 % 
-% [spinw] \| [spinw.spinwave] \| [spinw.matparser] \| [sw_readparam]
+% [spinw] \| [spinw.spinwave] \| [spinw.matparser] \| [s_readparam]
 %
 
 if nargin <= 1
@@ -127,8 +127,8 @@ inpForm.defval = {'Sperp'     false  0     @obj.matparser []      []     -1   };
 inpForm.size   = {[1 -1]      [1 1]  [1 1] [1 1]          [1 -2]  [1 1]  [1 1]};
 inpForm.soft   = {false       false  false false          true    true   false};
 
-warnState = warning('off','sw_readparam:UnreadInput');
-param = sw_readparam(inpForm, varargin{:});
+warnState = warning('off','s_readparam:UnreadInput');
+param = s_readparam(inpForm, varargin{:});
 
 if ~isempty(param.param)
     % change matrix values for Horace data fitting

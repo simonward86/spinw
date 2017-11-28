@@ -28,7 +28,7 @@ try
     % with symmetry
     nairo.newcell({[1 0 0] [0 1 0] [0 0 1]})
     
-    % rotation needs to be added, see sw_rot
+    % rotation needs to be added, see s_rot
     nairo.addmatrix('color',[255; 0; 0],'label','JKxx');
     nairo.addmatrix('color',[0; 255; 0],'label','JKyy');
     nairo.addmatrix('color',[0; 0; 255],'label','JKzz');
@@ -291,7 +291,7 @@ end
 
 function omega = omegaH(q,x)
 
-q = sw_qscan(q);
+q = s_qscan(q);
 
 J1 = x(1);
 J2 = x(2);
@@ -318,7 +318,7 @@ end
 
 function omega = omegaIJ(q,x)
 
-q = sw_qscan(q);
+q = s_qscan(q);
 
 J1 = x(1);
 J2 = x(2);

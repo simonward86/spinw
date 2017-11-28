@@ -32,7 +32,7 @@ function spectra = phonon(obj, hkl, varargin)
 
 % for linear scans create the Q line(s)
 if nargin > 1
-    hkl = sw_qscan(hkl);
+    hkl = s_qscan(hkl);
 else
     hkl = [];
 end
@@ -47,7 +47,7 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = s_readparam(inpForm, varargin{:});
         
         if ~param0.fitmode
             fprintf0(obj.fileid,'No hkl value was given, phonon spectrum for general Q (h,k,l) will be calculated!\n');

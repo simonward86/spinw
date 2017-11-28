@@ -99,7 +99,7 @@ inpForm.fname  = {'T'   'nRand' 'tol' 'omega_tol' 'hermit' 'fid'};
 inpForm.defval = {T0    1000    1e-4  1e-5        true     -1   };
 inpForm.size   = {[1 1] [1 1]   [1 1] [1 1]       [1 1]    [1 1]};
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 magstr = obj.magstr;
 
@@ -179,7 +179,7 @@ JJ = cat(3,reshape(SS.all(6:end,:),3,3,[]),SI.aniso);
 
 if incomm
     % transform JJ due to the incommensurate wavevector
-    [~, K] = sw_rot(n,km*dR*2*pi);
+    [~, K] = s_rot(n,km*dR*2*pi);
     % multiply JJ with K matrices for every interaction
     % and symmetrising JJ for the rotating basis
     JJ = (mmat(JJ,K)+mmat(K,JJ))/2;
@@ -220,7 +220,7 @@ idxMF = [(1:2*nMagExt)' (1:2*nMagExt)' ];
 % MEMORY MANAGEMENT LOOP
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-nSlice = ceil(nMagExt^2*nRand*6912/sw_freemem*2);
+nSlice = ceil(nMagExt^2*nRand*6912/s_freemem*2);
 
 if nRand < nSlice
     if fid ~= 0
@@ -236,7 +236,7 @@ end
 hklIdx = [floor(((1:nSlice)-1)/nSlice*nRand)+1 nRand+1];
 
 if fid == 1
-    sw_timeit(0,1);
+    s_timeit(0,1);
 end
 
 for jj = 1:nSlice
@@ -346,14 +346,14 @@ for jj = 1:nSlice
     M.moment = M.moment + sum(sum(abs(V).^2.*repmat(permute(nBose,[3 1 2]),[nMagExt*2 1 1]),3),2);
     
     if fid == 1
-        sw_timeit(jj/nSlice*100);
+        s_timeit(jj/nSlice*100);
     end
     
 end
 
 
 if fid == 1
-    sw_timeit(100,2);
+    s_timeit(100,2);
 else
     if fid ~= 0
         fprintf0(fid,'Calculation finished.\n');

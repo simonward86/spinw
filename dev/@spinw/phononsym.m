@@ -37,7 +37,7 @@ inpForm.fname  = {'tol' 'hkl'  'eig' 'norm' 'title'};
 inpForm.defval = {1e-4   hkl0   true true   title0 };
 inpForm.size   = {[1 1] [3 1]  [1 1] [1 1]  [1 -1] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % symbolic wavevectors
 hkl = param.hkl;

@@ -53,16 +53,16 @@ yig.getmatrix('bond',4);
 T = yig.newcell('bvect',pBV);
 
 % exchange values from the paper
-Jad = sw_converter(9.60e-21,'J','THz','photon');
-Jdd = sw_converter(3.24e-21,'J','THz','photon');
-Jaa = sw_converter(0.92e-21,'J','THz','photon');
+Jad = s_converter(9.60e-21,'J','THz','photon');
+Jdd = s_converter(3.24e-21,'J','THz','photon');
+Jaa = s_converter(0.92e-21,'J','THz','photon');
 
 % scale the interactions from classical moment size to quantum model
 Scl = sqrt(S0*(S0+1));
 yig.quickham([Jad Jdd Jaa]/Scl)
 
 % add external field and convert from the standard SpinW unit (meV) to THz
-yig.field([0 0 0.01]*sw_converter(1,'meV','THz','photon'))
+yig.field([0 0 0.01]*s_converter(1,'meV','THz','photon'))
 yig.optmagsteep
 yig.genmagstr('mode','rotate','n',[0 0 1])
 yig.optmagsteep

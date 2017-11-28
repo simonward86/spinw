@@ -99,7 +99,7 @@ inpForm.defval = {true     -1    'off'     []      };
 inpForm.size   = {[1 1]    [1 1] [1 -1]    [1 -2]  };
 inpForm.soft   = {false    false false     true    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 switch param.isomode
     case 'auto'
@@ -120,7 +120,7 @@ end
 % for linear scans create the Q line(s)
 if nargin > 1
     if iscell(hkl)
-        hkl = sw_qscan(hkl);
+        hkl = s_qscan(hkl);
     elseif numel(hkl)==3
         hkl = hkl(:);
     end
@@ -138,7 +138,7 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = s_readparam(inpForm, varargin{:});
         
         if ~param0.fitmode
             fprintf0(fid,['No symbolic hkl value was given, Fourier'...
@@ -158,7 +158,7 @@ end
 % is there Heisenberg exchange only
 matidx = unique(obj.coupling.mat_idx(:)');
 matidx(matidx==0) = [];
-isIso = all(sw_mattype(obj.matrix.mat(:,:,matidx))==1);
+isIso = all(s_mattype(obj.matrix.mat(:,:,matidx))==1);
 
 fprintf0(fid,'Calculating the Fourier transformation of the spin Hamiltonian...\n')
 if isIso

@@ -51,7 +51,7 @@ function spec = sw_tofres(spec, varargin)
 % : Determines if the elapsed and required time for the calculation is
 %   displayed. The default value is determined by the `tid` preference
 %   stored in [swpref]. The following values are allowed (for more details
-%   see [sw_timeit]):
+%   see [s_timeit]):
 %   * `0` No timing is executed.
 %   * `1` Display the timing in the Command Window.
 %   * `2` Show the timing in a separat pup-up window.
@@ -83,7 +83,7 @@ inpForm.fname  = {'method'  'dQ'  'nQ' 'fid' 'tid'};
 inpForm.defval = {'grid'    dQ0    nQ0 -1    -1   };
 inpForm.size   = {[1 -1] [1 -2] [1 -3] [1 1] [1 1]};
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 obj   = spec.obj;
 
 if param.fid == -1
@@ -114,7 +114,7 @@ switch param.method
         
         fprintf0(fid,'Calculating TOF Q-binning using random method...\n')
         
-        sw_timeit(0,1,param.tid,'TOF Q-binning resolution calculation');
+        s_timeit(0,1,param.tid,'TOF Q-binning resolution calculation');
         
         for ii = 1:prod(nQ)
             hklC = bsxfun(@minus,bsxfun(@times,dQ',rand(size(hkl))),dQ'/2)+hkl;
@@ -122,7 +122,7 @@ switch param.method
             spec0 = sw_egrid(spec0,'Evect',Evect,'component',spec.component);
             conv0 = conv0 + spec0.swConv;
             
-            sw_timeit(ii/prod(nQ)*100,0,param.tid);
+            s_timeit(ii/prod(nQ)*100,0,param.tid);
         end
         
     case 'grid'
@@ -150,7 +150,7 @@ switch param.method
         
         fprintf0(fid,'Calculating TOF Q-binning using grid method...\n')
         
-        sw_timeit(0,1,param.tid,'TOF Q-binning resolution calculation');
+        s_timeit(0,1,param.tid,'TOF Q-binning resolution calculation');
         
         
         for ii = 1:prod(nQ)
@@ -159,14 +159,14 @@ switch param.method
             spec0 = sw_egrid(spec0,'Evect',Evect,'component',spec.component);
             conv0 = conv0 + spec0.swConv;
             
-            sw_timeit(ii/prod(nQ)*100,0,param.tid);
+            s_timeit(ii/prod(nQ)*100,0,param.tid);
         end
         
     otherwise
         error('sw_tofres:WrongOption','Wrong method option!')
 end
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid);
 obj.fileid(fid);
 spec.swConv = conv0/prod(nQ);
 fprintf0(fid,'Calculation finished.\n')

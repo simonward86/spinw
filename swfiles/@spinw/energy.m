@@ -69,7 +69,7 @@ inpForm.fname  = {'epsilon'};
 inpForm.defval = {1e-5     };
 inpForm.size   = {[1 1]    };
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 [SS, SI] = obj.intmatrix;
 
@@ -119,7 +119,7 @@ if nMagExt>0
         %n = magStr.n;
         dRIdx = find(any(dR));
         for ii = 1:numel(dRIdx)
-            %M2(:,dRIdx(ii)) = sw_rot(n, kExt*dR(:,dRIdx(ii))*2*pi, M2(:,dRIdx(ii)));
+            %M2(:,dRIdx(ii)) = s_rot(n, kExt*dR(:,dRIdx(ii))*2*pi, M2(:,dRIdx(ii)));
             % TODO check - sign in front of phase
             M2(:,dRIdx(ii)) = real(bsxfun(@times,M2cmplx(:,dRIdx(ii)),exp(-1i*kExt*dR(:,dRIdx(ii))*2*pi)));
         end

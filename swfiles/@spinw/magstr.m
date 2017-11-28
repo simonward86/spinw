@@ -58,7 +58,7 @@ inpForm.fname  = {'nExt' 'exact' 'origin'};
 inpForm.defval = {nExt0  true    [0 0 0] };
 inpForm.size   = {[1 3]  [1 1]   [1 3]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if any(param.origin-round(param.origin))
     error('swplot:magstr:WrongInput','Shifting the origin is only allowed by multiples of lattice vectors!')
@@ -115,7 +115,7 @@ if ~isempty(kInc)
     if sw_always(norm(n) < 10*eps)
         % find any n perpendicular to the first spin vector (in most cases
         % it works)
-        V = sw_cartesian(real(obj.mag_str.F(:,1)));
+        V = s_cartesian(real(obj.mag_str.F(:,1)));
         magOut.n = V(:,2)';
     else
         magOut.n = n/norm(n);
@@ -127,7 +127,7 @@ end
 
 
 % check whether the above calculation gives an exact magnetic structure
-nUn = sw_uniquetol(reshape(cross(real(obj.mag_str.F(:,:,kInc)),imag(obj.mag_str.F(:,:,kInc))),3,[]));
+nUn = s_uniquetol(reshape(cross(real(obj.mag_str.F(:,:,kInc)),imag(obj.mag_str.F(:,:,kInc))),3,[]));
 
 magOut.N_ext = nExtNew;
 % TODO check whether the original structure is not sinusoidal

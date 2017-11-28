@@ -69,7 +69,7 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Help on SpinW</a></li><li><a href="#2">Generate lattice</a></li><li><a href="#3">Adding atoms</a></li><li><a href="#4">Definition of the spin-Hamiltonian</a></li><li><a href="#5">Magnetic structure</a></li><li><a href="#6">Spin wave dispersion</a></li><li><a href="#7">Spin-spin correlation functions</a></li><li><a href="#8">k=0 magnetic structure</a></li><li><a href="#9">Spin wave dispersion on the k=0 magnetic structure</a></li></ul></div><h2 id="1">Help on SpinW</h2><p>Use the help command to get help on any SpinW function. For any function that starts with 'sw_' use help swfiles, for spinw class methods use help spinw.function_name. For help on plotting commands, use help swplot.</p><pre class="codeinput">help <span class="string">swfiles</span>
 
 <span class="comment">% To find the location of the spinw library use</span>
-sw_rootdir
+s_rootdir
 
 <span class="comment">% To open any of the functions in the Matlab editor, use</span>
 edit <span class="string">spinw.plot</span>
@@ -106,13 +106,13 @@ swpref.getpref
  
   Generate list of vectors in reciprocal space:
  
-    sw_qgrid         - creates a Q grid
-    sw_qscan         - creates linear scans between Q points in 3D
+    s_qgrid         - creates a Q grid
+    s_qscan         - creates linear scans between Q points in 3D
  
   Resolution claculation and convolution:
  
-    sw_res           - reads a tabulated energy resolution from a file and fits with polynomial
-    sw_resconv       - Convolute Gaussian with variable width along the first dimension of a matrix
+    s_res           - reads a tabulated energy resolution from a file and fits with polynomial
+    s_resconv       - Convolute Gaussian with variable width along the first dimension of a matrix
     sw_tofres        - includes Q resolution to the spectrum
  
   SpinW model related functions:
@@ -137,9 +137,9 @@ swpref.getpref
     sw_mattype       - determines the type of square input matrix
     sw_nvect         - determines the best normal vector for the set of vectors
     sw_quadell       - calculates and plots the parameters of an ellipsoid from a quadratic form
-    sw_rot           - rotates vectors around arbitrary axis in 3D
-    sw_rotmat        - rotates vectors around arbitrary axis in 3D
-    sw_rotmatd       - rotates vectors around arbitrary axis in 3D
+    s_rot           - rotates vectors around arbitrary axis in 3D
+    s_rotmat        - rotates vectors around arbitrary axis in 3D
+    s_rotmatd       - rotates vectors around arbitrary axis in 3D
  
   Text and graphical input/output for different high level commands:
  
@@ -186,9 +186,9 @@ swpref.getpref
  
     sw_freemem       - gives the amount of free RAM in bytes
     sw_initialize    - initializes spinw by removing user entries from the symmetry.dat file
-    sw_readparam     - parse input arguments (option, value pairs)
-    sw_rootdir       - gives the path to the SpinW code
-    sw_uniquetol     - returns the unique column vectors within tolerance
+    s_readparam     - parse input arguments (option, value pairs)
+    s_rootdir       - gives the path to the SpinW code
+    s_uniquetol     - returns the unique column vectors within tolerance
     sw_update        - updates the SpinW installation from the internet
     sw_version       - returns the installed version of SpinW
     sw_mex           - compiles the mex files and test them
@@ -321,7 +321,7 @@ Sandor Toth
 help swfiles
 
 % To find the location of the spinw library use
-sw_rootdir
+s_rootdir
 
 % To open any of the functions in the Matlab editor, use
 edit spinw.plot

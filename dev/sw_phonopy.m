@@ -55,7 +55,7 @@ end
 % reshape the modes
 spectra.Sab = reshape(spectra.Sab,3,[],nMode,nHkl);
 
-spectra.omega = spectra.omega*sw_converter(1,'THz','meV');
+spectra.omega = spectra.omega*s_converter(1,'THz','meV');
 
 if ~isfield(band,'atomReducedPositions')
     readobj = false;

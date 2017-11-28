@@ -35,7 +35,7 @@ inpForm.defval = {0      true   1e3    []       []      };
 inpForm.size   = {[1 -1] [1 1]  [1 1]  [1 1]    [1 -2]  };
 inpForm.soft   = {false  false  false  true     true    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if numel(param.T)>1
     param.plot = false;
@@ -76,7 +76,7 @@ if isempty(param.lambda)
     % generate exchange couplings
     SS = obj.intmatrix('fitmode',true,'extend',false,'conjugate',true,'zeroC',false);
     % calculate the basis vectors
-    L = sw_bonddim(SS.all(1:5,:));
+    L = s_bonddim(SS.all(1:5,:));
     % unite all basis vectors to get the dimensionality of the full system
     dl    = [L(:).base];
     kbase = orth(dl);
@@ -86,7 +86,7 @@ if isempty(param.lambda)
     % q-points
     N    = round(param.nInt^(1/D));
     nQBZ = N^D;
-    BZ  = sw_qgrid('mat',kbase,'bin',repmat({linspace(0,1,N)},1,D));
+    BZ  = s_qgrid('mat',kbase,'bin',repmat({linspace(0,1,N)},1,D));
     
     chi0 = obj.fourier(reshape(BZ,3,[]),'fid',0);
     % include the spin value into the Fourier transform of the Js

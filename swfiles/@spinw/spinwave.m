@@ -81,7 +81,7 @@ function spectra = spinwave(obj, hkl, varargin)
 %
 % `'formfactfun'`
 % : Function that calculates the magnetic form factor for given $Q$ value.
-%   value. Default value is `@sw_mff`, that uses a tabulated coefficients
+%   value. Default value is `@s_mff`, that uses a tabulated coefficients
 %   for the form factor calculation. For anisotropic form factors a user
 %   defined function can be written that has the following header:
 %   ```
@@ -174,7 +174,7 @@ function spectra = spinwave(obj, hkl, varargin)
 % : Determines if the elapsed and required time for the calculation is
 %   displayed. The default value is determined by the `tid` preference
 %   stored in [swpref]. The following values are allowed (for more details
-%   see [sw_timeit]):
+%   see [s_timeit]):
 %   * `0` No timing is executed.
 %   * `1` Display the timing in the Command Window.
 %   * `2` Show the timing in a separat pup-up window.
@@ -234,7 +234,7 @@ function spectra = spinwave(obj, hkl, varargin)
 
 % for linear scans create the Q line(s)
 if nargin > 1
-    hkl = sw_qscan(hkl);
+    hkl = s_qscan(hkl);
 else
     hkl = [];
 end
@@ -258,7 +258,7 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = s_readparam(inpForm, varargin{:});
         
         if ~param0.fitmode
             warning('spinw:spinwave:MissingInput','No hkl value was given, spin wave spectrum for general Q (h,k,l) will be calculated!');
@@ -278,6 +278,7 @@ if nargin==1
 end
 
 title0 = 'Numerical LSWT spectrum';
+timeTxt = 'Calculating...';
 
 inpForm.fname  = {'fitmode' 'notwin' 'sortMode' 'optmem' 'tol' 'hermit'};
 inpForm.defval = {false     false    true       0        1e-4  true    };
@@ -288,14 +289,14 @@ inpForm.defval = [inpForm.defval {1e-5        false      false   false  }];
 inpForm.size   = [inpForm.size   {[1 1]       [1 1]      [1 1]   [1 1]  }];
 
 inpForm.fname  = [inpForm.fname  {'formfact' 'formfactfun' 'title' 'gtensor'}];
-inpForm.defval = [inpForm.defval {false       @sw_mff      title0  false    }];
+inpForm.defval = [inpForm.defval {false       @s_mff      title0  false    }];
 inpForm.size   = [inpForm.size   {[1 -1]      [1 1]        [1 -2]  [1 1]    }];
 
 inpForm.fname  = [inpForm.fname  {'cmplxBase' 'tid' 'fid' }];
 inpForm.defval = [inpForm.defval {false       -1    -1    }];
 inpForm.size   = [inpForm.size   {[1 1]       [1 1] [1 1] }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if ~param.fitmode
     % save the time of the beginning of the calculation
@@ -515,7 +516,7 @@ JJ = cat(3,reshape(SS.all(6:14,:),3,3,[]),SI.aniso);
 
 if incomm
     % transform JJ due to the incommensurate wavevector
-    [~, K] = sw_rot(n,km*dR*2*pi);
+    [~, K] = s_rot(n,km*dR*2*pi);
     % multiply JJ with K matrices for every interaction
     % and symmetrising JJ for the rotating basis
     JJ = (mmat(JJ,K)+mmat(K,JJ))/2;
@@ -607,7 +608,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 if param.optmem == 0
-    freeMem = sw_freemem;
+    freeMem = s_freemem;
     if freeMem > 0
         nSlice = ceil(nMagExt^2*nHkl*6912/freeMem*2);
     else
@@ -668,7 +669,7 @@ if param.saveH
     Hsave = zeros(2*nMagExt,2*nMagExt,nHkl);
 end
 
-sw_timeit(0,1,param.tid,'Spin wave spectrum calculation');
+s_timeit(0,1,param.tid,timeTxt);
 
 warn1 = false;
 
@@ -812,7 +813,7 @@ for jj = 1:nSlice
                     catch PD
                         if param.tid == 2
                             % close timer window
-                            sw_timeit(100,2,param.tid);
+                            s_timeit(100,2,param.tid,timeTxt);
                         end
                         error('spinw:spinwave:NonPosDefHamiltonian',...
                             ['Hamiltonian matrix is not positive definite, probably'...
@@ -902,7 +903,7 @@ for jj = 1:nSlice
     % Normalizes the intensity to single unit cell.
     Sab = cat(4,Sab,squeeze(sum(zeda.*ExpFL.*VExtL,4)).*squeeze(sum(zedb.*ExpFR.*VExtR,3))/prod(nExt));
     
-    sw_timeit(jj/nSlice*100,0,param.tid);
+    s_timeit(jj/nSlice*100,0,param.tid,timeTxt);
 end
 
 if param.sortMode
@@ -921,7 +922,7 @@ if obj.unit.nformula > 0
     Sab = Sab/double(obj.unit.nformula);
 end
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid,timeTxt);
 
 fprintf0(fid,'Calculation finished.\n');
 
@@ -1054,6 +1055,8 @@ end
 if orthWarn0
     warning('spinw:spinwave:NoOrth','Eigenvectors of defective eigenvalues cannot be orthogonalised at some q-point!');
 end
+
+lineLink = ['<a href="matlab:opentoline([''' s_rootdir 'swfiles' filesep '@spinw' filesep 'spinwave.m''' '],758,0)">line 758</a>'];
 
 if strcmp(singWarn,'MATLAB:nearlySingularMatrix')
     lineLink = 'line 846';

@@ -15,7 +15,7 @@ phi = atan2(norm(cross(v1,v2)),dot(v1,v2));
 
 Create a rotation matrix:
 
-R = sw_rotmat(ax,phi);
+R = s_rotmat(ax,phi);
 
 Rotate the Aniso matrix:
 

@@ -13,7 +13,7 @@ kag.quickham(1)
 %% calculate fourier transformation
 
 for ii = 1:10:100
-    Q = reshape(sw_qgrid('bin',{[0 0.01 2] [0 0.01 2] [1 ii]}),3,[]);
+    Q = reshape(s_qgrid('bin',{[0 0.01 2] [0 0.01 2] [1 ii]}),3,[]);
     tic;
     F2 = kag.fourier(Q,'isomode','auto');
     t1(ii) = toc;

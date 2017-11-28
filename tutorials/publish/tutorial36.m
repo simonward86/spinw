@@ -59,7 +59,7 @@ afmch = spinw;
 afmch.genlattice('lat_const',[3 4 4])
 afmch.addatom('r',[  0 0 0],'S',1)
 
-R = sw_rotmatd([0 0 1],45);
+R = s_rotmatd([0 0 1],45);
 J1 = diag([3 4 4.1]);
 J1 = R*J1*R';
 

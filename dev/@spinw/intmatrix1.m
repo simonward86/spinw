@@ -73,7 +73,7 @@ function [SS, SI, RR] = intmatrix(obj, varargin)
 %
 
 %if obj.symbolic && obj.symmetry
-%    if any(sw_mattype(obj.matrix.mat)~=1)
+%    if any(s_mattype(obj.matrix.mat)~=1)
 %        warning('sw:intmatrix:symmetry',['The non-isotropic symbolic matrices '...
 %            'will be rotated unsing the point group operators, the result can be ugly!']);
 %    end
@@ -83,7 +83,7 @@ inpForm.fname  = {'fitmode' 'plotmode' 'zeroC' 'extend' 'conjugate' 'rotMat' 'so
 inpForm.defval = {0          false     false   true     false       true     false   };
 inpForm.size   = {[1 1]      [1 1]     [1 1]   [1 1]    [1 1]       [1 1]    [1 1]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % create parameters of magnetic atoms in the unit cell
 mAtom    = obj.matom;
@@ -245,7 +245,7 @@ SS.all   = SS.all(1:5,:);
 
 % don't calculate these for speedup in case of fitting
 if param.fitmode < 2
-    JJ.type = sw_mattype(JJ.mat);
+    JJ.type = s_mattype(JJ.mat);
     
     % new type for biquadratic exchange
     if any(JJ.type(mat_type==1)~=1)
@@ -381,7 +381,7 @@ end
 if param.extend
     % Extend the lattice for magnetic interactions
     nExt = double(obj.mag_str.N_ext);
-    [mAtom, SS] = sw_extendlattice(nExt, mAtom, SS);
+    [mAtom, SS] = s_extendlattice(nExt, mAtom, SS);
     SI.aniso = repmat(SI.aniso, [1 1 prod(nExt)]);
     SI.g     = repmat(SI.g, [1 1 prod(nExt)]);
     

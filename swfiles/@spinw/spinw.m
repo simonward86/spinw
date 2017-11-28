@@ -1,4 +1,4 @@
-classdef spinw < handle & matlab.mixin.SetGet
+classdef spinw < spin
     % class to store and solve magnetic Hamiltonians
     %
     % ### Syntax
@@ -84,7 +84,7 @@ classdef spinw < handle & matlab.mixin.SetGet
     %   spinw.formula
     %   spinw.disp
     %   spinw.symmetry
-    %   
+    %
     % #### Plotting
     %
     %   spinw.plot
@@ -107,13 +107,13 @@ classdef spinw < handle & matlab.mixin.SetGet
     %   spinw.anneal
     %   spinw.annealloop
     %   spinw.structfact
-    %   
+    %
     % #### Matrix operations
     %
     %   spinw.addmatrix
     %   spinw.getmatrix
     %   spinw.setmatrix
-    %   
+    %
     % #### Spin Hamiltonian generations
     %
     %   spinw.quickham
@@ -127,7 +127,7 @@ classdef spinw < handle & matlab.mixin.SetGet
     %   spinw.intmatrix
     %   spinw.symop
     %   spinw.setunit
-    %   
+    %
     % #### Solvers
     %
     %   spinw.spinwave
@@ -145,7 +145,7 @@ classdef spinw < handle & matlab.mixin.SetGet
     %   spinw.fitspec
     %   spinw.matparser
     %   spinw.horace
-    %   
+    %
     % #### Miscellaneous
     %
     %   spinw.copy
@@ -161,193 +161,8 @@ classdef spinw < handle & matlab.mixin.SetGet
     %
     % [spinw.copy], [spinw.struct], [Comparing handle and value classes](https://www.mathworks.com/help/matlab/matlab_oop/comparing-handle-and-value-classes.html)
     %
-
+    
     properties (SetObservable)
-        % stores the unit cell parameters
-        %
-        % ### Sub fields
-        %
-        % `lat_const`
-        % : Lattice constants in a $[1\times 3]$ vector in units defined in
-        %   [spinw.unit] (default value is \\ang).
-        %
-        % `angle`
-        % : `[\\alpha,\\beta,\\gamma]` angles in a $[1\times 3]$ vector in
-        %   radian units.
-        %
-        % `sym`
-        % : Symmetry operators stored in matrix with dimensions of
-        %   $[3\times 4 \times n_{op}]$.
-        %
-        % `origin`
-        % : Origin of the cell in lattice units.
-        % 
-        % `label`
-        % : Label of the space group.
-        %
-        lattice
-        % stores the atoms in the crystallographic unit cell
-        %
-        % ### Sub fields
-        %
-        % `r`
-        % : Positions of the atoms in the unit cell, stored in a
-        %   matrix with dimensions of $[3\times n_{atom}]$, values are
-        %   in lattice units.
-        %
-        % `S`
-        % : Spin quantum number of the atoms, stored in a row vector with
-        %   $n_{atom}$ number of elements, non-magnetic atoms have `S=0`.
-        %
-        % `label`
-        % : Label of the atom, strings stored in a $[1\times n_{atom}]$
-        %   cell.
-        %
-        % `color`
-        % : Color of the atom stored in a matrix with dimensions of $[3\times n_{atom}]$, where every
-        %   column defines an RGB color with values between 0 and 255.
-        %
-        % `ox`
-        % : Oxidation number of the atom, stored in a $[1\times n_{atom}]$
-        %   matrix.
-        %
-        % `occ`
-        % : Site occupancy in a $[1\times n_{atom}]$ matrix.
-        %
-        % `b`
-        % : Scattering length of the atoms for neutron and x-ray
-        %   stored in a $[2\times n_{atom}]$ matrix, first row is neutron,
-        %   second row is for x-ray.
-        %
-        % `ff`
-        % : Form factor of the site stored in a $[2\times 9\times
-        %   n_{atom}]$ matrix, first row is the magnetic form factor for
-        %   neutrons, the second row is the charge form factor for x-ray
-        %   cross section.
-        %
-        % `Z`
-        % : Atomic number in a row vector.
-        %
-        % `A`
-        % : Atomic mass (N+Z) for isotopes and -1 for natural
-        %   distribution of isotopes stored in a row vector.
-        %
-        % `biso`
-        % : Isotropic displacement factors in units of \\ang$^2$.
-        %   Definition is the same as in
-        %   [FullProf](https://www.ill.eu/sites/fullprof/), defining the
-        %   Debye-Waller factor as $W(d) = 1/8*b_{iso}/d^2$ which is
-        %   included in the structure factor as $\exp(-2W(d))$.
-        %
-        unit_cell
-        % stores the crystal twin parameters
-        %
-        % ### Sub fields
-        %
-        % `rotc`
-        % : Rotation matrices in the $xyz$ coordinate system for
-        %   every twin, stored in a matrix with dimensions of $[3\times
-        %   3\times n_{twin}]$.
-        %
-        % `vol`
-        % : Volume ratio of the different twins, stored in a
-        %    row vector with $n_{twin}$ elements.
-        %
-        twin
-        % stores 3x3 matrices for using them in the Hailtonian
-        %
-        % ### Sub fields
-        %
-        % `mat`
-        % : Stores the actual values of 3x3 matrices, in a matrix with
-        % dimensions of $[3\times 3\times n_{matrix}]$, if assigned for a 
-        % bond, the unit of energy is stored in [spinw.unit] (default value 
-        % is meV).
-        %
-        % `color`
-        % : Color assigned for every matrix, stored in a
-        %   matrix with dimensions of $[3\times n_{matrix}]$, with each
-        %   column defining an RGB value.
-        %
-        % `label`
-        % : Label for every matrix, stored as string in a cell with
-        %   dimensions of $[1\times n_{matrix}]$.
-        %
-        matrix
-        % stores single ion terms of the Hamiltonian
-        %
-        % ### Sub fields
-        %
-        % `aniso`
-        % : Row vector that contains $n_{magatom}$ integers, each integer
-        %   assignes one of the matrices from the [spinw.matrix] property
-        %   to a magnetic atom in the generated [spinw.matom] list as a single
-        %   ion anisotropy. Zero value of `aniso` means no single ion
-        %   anisotropy for the corresponding magnetic atom.
-        %
-        % `g`
-        % : Row vector with $n_{magatom}$ integers, each integer
-        %   assignes one of the matrices from the [spinw.matrix] property
-        %   to a magnetic atom in the spinw.matom list as a
-        %   g-tensor. Zero value of `g` means a default g-value of 2 for
-        %   the corresponding atoms.
-        %
-        % `field`
-        % : External magnetic field stored in a row vector with 3 elements,
-        %   unit is defined in [spinw.unit] (default unit is Tesla).
-        %
-        % `T`
-        % : Temperature, scalar, unit is defined in [spinw.unit] (default
-        %   unit is Kelvin).
-        %
-        single_ion
-        % stores the list of bonds
-        %
-        % ### Sub fields
-        %
-        % `dl`
-        % : Distance between the unit cells of two interacting
-        %   spins, stored in a $[3\times n_{coupling}]$ matrix.
-        %
-        % `atom1`
-        % : First magnetic atom, pointing to the list of
-        %   magnetic atoms in the list generated by `spinw.matom`, stored in a
-        %   row vector with $n_{coupling}$ element.
-        %
-        % `atom2`
-        % : Second magnetic atom, same as `atom1`.
-        %
-        % `mat_idx`
-        % : Stores pointers to matrices for every coupling in a
-        %   $[3\times n_{coupling}]$ matrix, maximum three matrix per
-        %   coupling (zeros for no coupling) is allowed.
-        %
-        % `idx`
-        % : Neighbor index, increasing indices for the equivalent
-        %   couplings, starting with 1,2,... which means first and second
-        %   neighbor bonds, respectively.
-        %
-        % `type`
-        % : Type of coupling corresponding to `mat_idx` matrices.
-        %   Default is 0 for quadratic exchange, `type = 1` for
-        %   biquadratic exchange.
-        % 
-        % `sym`
-        % : If `true` the bond symmetry operators will be applied
-        %   on the assigned matrix.
-        % 
-        % `rdip`
-        % : Maximum distance until the dipolar interaction is
-        %   calculated. Zero value means no dipolar interactions
-        %   are considered.
-        % 
-        % `nsym`
-        % : The largest bond `idx` value that is generated
-        %   using the space group operators. Typically very long bonds for
-        %   dipolar interactions won't be calculated using space group
-        %   symmetry.
-        %
-        coupling
         % stores the magnetic structure
         %
         % ### Sub fields
@@ -371,71 +186,15 @@ classdef spinw < handle & matlab.mixin.SetGet
         %   along the $a$, $b$ and $c$ axes.
         %
         mag_str
-        % stores the physical units for the Hamiltonian
-        %
-        % Default values are meV, T, \\ang and K for energy, magnetic
-        % field, length and temperature, respectively.
-        %
-        % ### Sub fields
-        %
-        % `kB`
-        % : Boltzmann constant, default value is 0.0862 meV/K.
-        %
-        % `muB`
-        % : Bohr magneton, default values is 0.0579 meV/T.
-        %
-        % `mu0`
-        % : Vacuum permeability, default value is 201.335431 T$^2$\\ang$^3$/meV.
-        %
-        % `label`
-        % : Labels for distance, energy, magnetic field and temperature
-        % stored in a cell with dimensions $[1\times 4]$.
-        %
-        % `nformula`
-        % : Number of formula units in the unit cell.
-        %
-        % `qmat`
-        % : Transformation matrix that converts the given $Q$ values into
-        % the internal reciprocal lattice. The matrix has dimensions of
-        % $[3\times 3]$.
-        %
-        unit
-        % stores temporary values
-        %
-        % This property should be only used to check consistency of the code.
-        %
-        % {% include warning.html content="Changing these values is strongly 
-        % discouraged as it can break the code!" %}
-        % 
-        % ### Sub fields
-        %
-        % `matom`
-        % : Generated data of the magnetic unit cell.
-        %
-        % `symop`
-        % : Generated symmetry operators for each bond.
-        %
-        cache = struct('matom',[],'symop',[]);
-        
-    end
-    
-    properties (Access = private)
-        % stores the property change listener handles
-        propl = event.proplistener.empty;
-        % stores whether the couplings are generated under symmetry constraints
-        sym   = false;
-        % stores whether the calculation are done symbolically
-        symb  = false;
-        % use the version property as contant, this will be executed only
-        % once
-        ver   = sw_version;
     end
     
     methods (Static)
-        % static methods
-        validate(varargin)
+        % Call the base blass validator with our new datastructure
+        function validate(varargin)
+           spin.validate(varargin{1},datastruct,varargin{2:end})  
+        end
     end
-        
+    
     methods
         function obj = spinw(varargin)
             % spinw constructor
@@ -444,7 +203,7 @@ classdef spinw < handle & matlab.mixin.SetGet
             %
             % `obj = spinw`
             %
-            % `obj = spinw(struct)` 
+            % `obj = spinw(struct)`
             %
             % `obj = spinw(hFigure)`
             %
@@ -471,12 +230,19 @@ classdef spinw < handle & matlab.mixin.SetGet
             % `obj = spinw(obj)` checks the input SpinW object for
             % consistency.
             %
-
+            
+            if nargin == 1
+                if isa(varargin{1},'spin') % base class returns base class.
+                    varargin{1} = struct(varargin{1});
+                end
+            end
+            obj@spin(varargin{:})
+            
             if nargin==0
                 objS = initfield(struct);
                 fNames = fieldnames(objS);
                 for ii = 1:length(fNames)
-                   obj.(fNames{ii}) = objS.(fNames{ii});
+                    obj.(fNames{ii}) = objS.(fNames{ii});
                 end
                 return
             end
@@ -494,7 +260,7 @@ classdef spinw < handle & matlab.mixin.SetGet
                         obj    = copy(figDat.spectra.obj);
                 end
                 return
-
+                
             end
             
             if isa(firstArg, 'spinw')
@@ -530,7 +296,7 @@ classdef spinw < handle & matlab.mixin.SetGet
                     obj.(fNames{ii}) = objS.(fNames{ii});
                 end
                 
-                obj = sw_import(firstArg,false,obj);
+                obj = s_import(firstArg,false,obj);
                 
             end
             
@@ -579,7 +345,7 @@ classdef spinw < handle & matlab.mixin.SetGet
             
             nAtom = size(obj.unit_cell.r,2);
         end
-                
+        
         function clearcache(obj, chgField)
             % clears the cache
             %
@@ -592,7 +358,7 @@ classdef spinw < handle & matlab.mixin.SetGet
             % `clearcache(obj)` clears the cache that contains
             % precalculated magnetic structure and bond symmetry operators.
             % It is not necessary to clear the cache at any point as SpinW
-            % clears it whenever necessary. 
+            % clears it whenever necessary.
             %
             % ### See Also
             %
@@ -623,24 +389,24 @@ classdef spinw < handle & matlab.mixin.SetGet
                     delete(obj.propl(3:5));
             end
         end
-
+        
     end
     
     methods(Hidden=true,Static=true)
-            function obj = loadobj(obj)
-                % restore property listeners
-                % add new listeners to the new object
-                if ~isempty(obj.cache.matom)
-                    % add listener to lattice and unit_cell fields
-                    obj.addlistenermulti(1);
-                end
-                if ~isempty(obj.cache.symop)
-                    % add listener to lattice, unit_cell and coupling fields
-                    obj.addlistenermulti(2);
-                end
+        function obj = loadobj(obj)
+            % restore property listeners
+            % add new listeners to the new object
+            if ~isempty(obj.cache.matom)
+                % add listener to lattice and unit_cell fields
+                obj.addlistenermulti(1);
             end
+            if ~isempty(obj.cache.symop)
+                % add listener to lattice, unit_cell and coupling fields
+                obj.addlistenermulti(2);
+            end
+        end
     end
-        
+    
     methods(Hidden=true)
         
         function addlistenermulti(obj, chgField)
@@ -665,7 +431,7 @@ classdef spinw < handle & matlab.mixin.SetGet
             % empty pointers
             obj.propl = event.proplistener.empty;
         end
-
+        
         function lh = addlistener(varargin)
             lh = addlistener@handle(varargin{:});
         end

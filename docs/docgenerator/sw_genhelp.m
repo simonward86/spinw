@@ -8,7 +8,7 @@ inpForm.fname  = {'sourcepath' 'outpath' 'sidebar'    'fun'      'verstr' 'recal
 inpForm.defval = {{}           ''        'sw_sidebar' zeros(1,0) struct() true     zeros(1,0) ''        false   };
 inpForm.size   = {[1 -1]       [1 -5]    [1 -2]       [1 -3]     [1 1]    [1 1]    [1 -4]     [1 -6]    [1 1]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if ~iscell(param.sourcepath)
     path0 = {param.sourcepath};
@@ -18,7 +18,7 @@ end
 
 nPath = numel(path0);
 
-%docroot  = [sw_rootdir 'docs' filesep];
+%docroot  = [s_rootdir 'docs' filesep];
 docroot  = [param.outpath filesep];
 doctree  = struct('name',cell(1,nPath),'folder',[],'content',[]);
 

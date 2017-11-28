@@ -28,7 +28,7 @@ delta = [delta;-delta];
 theta = asin(-g*muB*H/(12*J*S+2*S*lambda));
 
 nQ = 200;
-qscan = sw_qscan({[1 0 0] [0 0 0] [1/2 1/2 0] [1/2 1/2 1/2] [0 0 0] nQ});
+qscan = s_qscan({[1 0 0] [0 0 0] [1/2 1/2 0] [1/2 1/2 1/2] [0 0 0] nQ});
 
 for ii = 1:size(qscan,2)
     q = qscan(:,ii)*2*pi;

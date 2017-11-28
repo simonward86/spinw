@@ -129,7 +129,7 @@ inpForm.fname  = {'tol' 'hkl'  'eig' 'vect' 'norm' 'title' 'fid'};
 inpForm.defval = {1e-4   hkl0   true false  false   title0 -1   };
 inpForm.size   = {[1 1] [3 1]  [1 1] [1 1]  [1 1]  [1 -1]  [1 1]};
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if param.norm
     param.vect = true;
@@ -157,7 +157,7 @@ end
 % Create the interaction matrix and atomic positions in the extended
 % magnetic unit cell.
 %[SS, SI, RR] = obj.intmatrix('plotmode',true,'extend',true,'fitmode',2);
-%if obj.symmetry && any(sw_mattype(obj.matrix.mat)~=1)
+%if obj.symmetry && any(s_mattype(obj.matrix.mat)~=1)
 %    warning('spinw:spinwavesym:symmetry',['The non-isotropic symbolic matrices will'...
 %    'not be rotated unsing the point group operators, define them manually!'])
 %end
@@ -241,7 +241,7 @@ JJ    = JJ(:,:,anyIdx);
 
 if incomm
     % transform JJ due to the incommensurate wavevector
-    [~, K] = sw_rot(n,km*dR*2*pi);
+    [~, K] = s_rot(n,km*dR*2*pi);
     % multiply JJ with K matrices for every interaction
     % and symmetrising JJ for the rotating basis
     JJ = (mmat(JJ,K)+mmat(K,JJ))/2;

@@ -45,7 +45,7 @@ inpForm.fname  = {'tol' 'zeroint' 'emptyval'};
 inpForm.defval = {1e-5  0         NaN       };
 inpForm.size   = {[1 1] [1 1]     [1 1]     };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 tol = param.tol;
 omega    = real(spectra.omega);
@@ -61,7 +61,7 @@ if isfield(spectra,'swInt') && param.zeroint > 0
 end
 
 for ii = 1:nQ
-    oTemp = sw_uniquetol(omega(:,ii)',param.tol);
+    oTemp = s_uniquetol(omega(:,ii)',param.tol);
     oTemp(oTemp == 0) = NaN;
     omegaCol(1:numel(oTemp),ii) = sort(oTemp);
     oTemp(isnan(oTemp)) = [];

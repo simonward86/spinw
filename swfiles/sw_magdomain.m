@@ -85,7 +85,7 @@ inpForm.fname  = {'axis'  'angle' 'rotC'   'vol'  'angled'};
 inpForm.defval = {[0 0 0] 0       zeros(3) 1      0       };
 inpForm.size   = {[1 3]   [1 -1]  [3 3 -2] [1 -3] [1 -4]  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if numel(param.angled)>1 || param.angled~=0
     param.angle = param.angled *pi/180;
@@ -96,7 +96,7 @@ if any(param.axis)
     nDom       = size(param.angle,2);
     param.rotC = zeros(3,3,nDom);
     for ii = 1:nDom
-        [~, param.rotC(:,:,ii)] = sw_rot(param.axis,param.angle(ii));
+        [~, param.rotC(:,:,ii)] = s_rot(param.axis,param.angle(ii));
     end
 else
     nDom = size(param.rotC,3);

@@ -6,12 +6,12 @@ function sw_initialize()
 % See also SPINW.
 %
 
-%cd(sw_rootdir);
+%cd(s_rootdir);
 %m2html('mfiles','swfiles','htmldir','doc')
-%builddocsearchdb([sw_rootdir 'doc']);
+%builddocsearchdb([s_rootdir 'doc']);
 
 % clear symmetry.dat file
-symPath = [sw_rootdir 'dat_files' filesep 'symmetry.dat'];
+symPath = [s_rootdir 'dat_files' filesep 'symmetry.dat'];
 % Count the number of lines
 fid = fopen(symPath);
 fidNew = fopen([symPath '0'],'w');

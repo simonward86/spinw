@@ -23,7 +23,7 @@ model.getmatrix('mat','DM1');
 
 % Look at the figure from a special angle using the swplot.transform
 % function and recenter the figure using swplot.translate.
-R = sw_rotmatd([1 1 0],45);
+R = s_rotmatd([1 1 0],45);
 swplot.transform(R)
 swplot.translate
     
@@ -54,7 +54,7 @@ model.quickham(1)
 plot(model)
 model.getmatrix('mat','J1');
 
-R = sw_rotmatd([0.5 1 0],45);
+R = s_rotmatd([0.5 1 0],45);
 swplot.transform(R)
 swplot.translate
 

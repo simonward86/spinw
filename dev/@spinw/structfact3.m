@@ -29,7 +29,7 @@ function sFact = structfact3(obj, hkl, varargin)
 %               calculation. Possible values:
 %                   false   No magnetic form factor is applied (default).
 %                   true    Magnetic form factors are applied, based on the
-%                           label string of the magnetic ions, see sw_mff()
+%                           label string of the magnetic ions, see s_mff()
 %                           function help.
 %                   cell    Cell type that contains mixed labels and
 %                           numbers for every symmetry inequivalent atom in
@@ -39,7 +39,7 @@ function sFact = structfact3(obj, hkl, varargin)
 %               correlations on the first atom and using the form factor of
 %               Cr3+ ion for the second atom.
 % formfactfun   Function that calculates the magnetic form factor for given
-%               Q value. Default value is @sw_mff(), that uses a tabulated
+%               Q value. Default value is @s_mff(), that uses a tabulated
 %               coefficients for the form factor calculation. For
 %               anisotropic form factors a user defined function can be
 %               written that has the following header:
@@ -77,10 +77,10 @@ function sFact = structfact3(obj, hkl, varargin)
 
 
 inpF.fname  = {'gtensor' 'tol' 'formfact' 'formfactfun'};
-inpF.defval = {false     1e-4  false       @sw_mff     };
+inpF.defval = {false     1e-4  false       @s_mff     };
 inpF.size   = {[1 1]     [1 1] [1 -1]      [1 1]       };
 
-param = sw_readparam(inpF, varargin{:});
+param = s_readparam(inpF, varargin{:});
 
 sGrid = size(hkl);
 
@@ -131,7 +131,7 @@ switch incomm
 end
 
 % positions of the magnetic atoms in the supercell in lu units
-matomExt = sw_extendlattice(nExt, matom);
+matomExt = s_extendlattice(nExt, matom);
 % positions in unit of the crystallographic unit cell
 RRext = matomExt.RRext;
 

@@ -49,24 +49,6 @@ function objC = copy(obj)
 % [spinw] \| [spinw.struct]
 %
 
-objS = struct(obj);
-objC = spinw(objS);
-
-% copy the private properties
-objC.propl  = event.proplistener.empty;
-objC.sym    = obj.sym;
-objC.symb   = obj.symb;
-objC.ver    = obj.ver;
-
-% add new listeners to the new object
-if ~isempty(obj.cache.matom)
-    % add listener to lattice and unit_cell fields
-    objC.addlistenermulti(1);
-end
-
-if ~isempty(obj.cache.symop)
-    % add listener to lattice, unit_cell and coupling fields
-    objC.addlistenermulti(2);
-end
+objC = copy@spin(obj);
 
 end

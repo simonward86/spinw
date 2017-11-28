@@ -108,7 +108,7 @@ function spectra = powspec(obj, hklA, varargin)
 %
 % `'formfactfun'`
 % : Function that calculates the magnetic form factor for given $Q$ value.
-%   value. Default value is `@sw_mff`, that uses a tabulated coefficients
+%   value. Default value is `@s_mff`, that uses a tabulated coefficients
 %   for the form factor calculation. For anisotropic form factors a user
 %   defined function can be written that has the following header:
 %   ```
@@ -156,7 +156,7 @@ function spectra = powspec(obj, hklA, varargin)
 % : Determines if the elapsed and required time for the calculation is
 %   displayed. The default value is determined by the `tid` preference
 %   stored in [swpref]. The following values are allowed (for more details
-%   see [sw_timeit]):
+%   see [s_timeit]):
 %   * `0` No timing is executed.
 %   * `1` Display the timing in the Command Window.
 %   * `2` Show the timing in a separat pup-up window.
@@ -200,7 +200,7 @@ title0 = 'Powder LSWT spectrum';
 tid0   = swpref.getpref('tid',[]);
 
 inpForm.fname  = {'nRand' 'Evect'    'T'   'formfact' 'formfactfun' 'tid' 'nInt'};
-inpForm.defval = {100     zeros(1,0) T0    false      @sw_mff       tid0  1e3   };
+inpForm.defval = {100     zeros(1,0) T0    false      @s_mff       tid0  1e3   };
 inpForm.size   = {[1 1]   [1 -1]     [1 1] [1 -2]     [1 1]         [1 1] [1 1] };
 
 inpForm.fname  = [inpForm.fname  {'hermit' 'gtensor' 'title' 'specfun' 'imagChk'}];
@@ -215,7 +215,7 @@ inpForm.fname  = [inpForm.fname  {'fid'}];
 inpForm.defval = [inpForm.defval {-1   }];
 inpForm.size   = [inpForm.size   {[1 1]}];
 
-param  = sw_readparam(inpForm, varargin{:});
+param  = s_readparam(inpForm, varargin{:});
 
 if param.fid == -1
     fid = swpref.getpref('fid',true);
@@ -256,7 +256,7 @@ fprintf0(fid,[yesNo{param.formfact+1} ' magnetic form factor is'...
 fprintf0(fid,[yesNo{param.gtensor+1} ' g-tensor is included in the '...
     'calculated structure factor.\n']);
 
-sw_timeit(0,1,param.tid,'Powder spectrum calculation');
+s_timeit(0,1,param.tid,'Powder spectrum calculation');
 
 if param.fibo
     % apply the Fibonacci numerical integration on a sphere
@@ -295,7 +295,7 @@ for ii = 1:nQ
         case 0
             % general function call allow arbitrary additional parameters to
             % pass to the spectral calculation function
-            warnState = warning('off','sw_readparam:UnreadInput');
+            warnState = warning('off','s_readparam:UnreadInput');
             specQ = param.specfun(obj,hkl,varargin{:});
             warning(warnState);
         case 1
@@ -319,10 +319,10 @@ for ii = 1:nQ
     specQ = sw_egrid(specQ,struct('Evect',param.Evect,'T',param.T,'binType',param.binType,...
     'imagChk',param.imagChk,'component',param.component),'noCheck');
     powSpec(:,ii) = sum(specQ.swConv,2)/param.nRand;
-    sw_timeit(ii/nQ*100,0,param.tid);
+    s_timeit(ii/nQ*100,0,param.tid);
 end
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid);
 
 fprintf0(fid,'Calculation finished.\n');
 

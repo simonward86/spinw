@@ -29,7 +29,7 @@ The latest version of SpinW can be downloaded from [https://github.com/tsdev/spi
 ### Updating
 
 Since SpinW is under active development, there are regular updates (new features, bug fixes). To update your local copy of SpinW do the following:
-* execute the [sw_update] function in the Matlab Command Window, this will check for the latest available version and downloads it into a new subfolder beside the current SpinW installation ([sw_rootdir] returns the current path) and adds the new files to the Matlab search path
+* execute the [sw_update] function in the Matlab Command Window, this will check for the latest available version and downloads it into a new subfolder beside the current SpinW installation ([s_rootdir] returns the current path) and adds the new files to the Matlab search path
 * to make the new path permanent, edit your `startup.m` file as written above
 * execute the `clear classes` command in the Command Window to clear the Matlab cache of user defined classes
 

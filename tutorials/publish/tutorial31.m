@@ -35,10 +35,10 @@ RA = Tl*pos
 
 
 %% Rotate a vector
-% Using the rotation axis and Rotation angle in degree, the sw_rotmatd can
+% Using the rotation axis and Rotation angle in degree, the s_rotmatd can
 % generate the corresponding rotation matrix.
 
-R = sw_rotmatd([0 0 1],60);
+R = s_rotmatd([0 0 1],60);
 
 % Rotate polar vector
 R*pos

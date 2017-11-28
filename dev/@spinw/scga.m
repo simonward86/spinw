@@ -46,11 +46,11 @@ inpForm.size   = {[1 -1] [1 1]  [1 1]  [1 1]    [1 -2]   [1 -3]    [1 1]     [1 
 inpForm.soft   = {false  false  false  true     true     false     false     false};
 
 inpForm.fname  = [inpForm.fname  {'formfact' 'formfactfun' 'gtensor' 'corr'        'chi'}];
-inpForm.defval = [inpForm.defval {false       @sw_mff      false     ~isempty(hkl) false}];
+inpForm.defval = [inpForm.defval {false       @s_mff      false     ~isempty(hkl) false}];
 inpForm.size   = [inpForm.size   {[1 -1]      [1 1]        [1 1]     [1 1]         [1 1]}];
 inpForm.soft   = [inpForm.soft   {false       false        false  	 false         false }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if param.T == 0
     error('spinw:scga:WrongInput','Invalid temperature, the SCGA solver needs non-zero temperature!')
@@ -96,7 +96,7 @@ if isempty(param.lambda)
     % generate exchange couplings
     SS = obj.intmatrix(struct('fitmode',true,'extend',false,'conjugate',true,'zeroC',false),'noCheck');
     % calculate the basis vectors
-    L = sw_bonddim(SS.all(1:5,:));
+    L = s_bonddim(SS.all(1:5,:));
     % unite all basis vectors to get the dimensionality of the full system
     dl    = [L(:).base];
     kbase = orth(dl);
@@ -106,7 +106,7 @@ if isempty(param.lambda)
     % q-points
     N    = round(param.nInt^(1/D));
     nQBZ = N^D;
-    BZ  = sw_qgrid('mat',kbase,'bin',repmat({linspace(0,1,N)},1,D),'fid',0);
+    BZ  = s_qgrid('mat',kbase,'bin',repmat({linspace(0,1,N)},1,D),'fid',0);
     % calculate the Fourier transform of the hamiltonian
     chiFT = obj.fourier(reshape(BZ,3,[]),struct('fid',0,'sublat',param.sublat,'isomode',param.isomode),'noCheck');
     % find the eigenvalues over the BZ

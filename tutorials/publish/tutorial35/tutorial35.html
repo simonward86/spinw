@@ -98,7 +98,7 @@ luvo.addaniso(<span class="string">'K'</span>)
 </pre><h2 id="3">Plot crystal structure with octahedral environment</h2><p>We plot the VO6 octahedra and rotate the view.</p><pre class="codeinput">plot(luvo,<span class="string">'chemMode'</span>,<span class="string">'poly'</span>,<span class="string">'chemAtom1'</span>,<span class="string">'V'</span>,<span class="string">'chemAtom2'</span>,<span class="string">'O'</span>,<span class="string">'chemLimit'</span>,6,<span class="keyword">...</span>
     <span class="string">'atomMode'</span>,<span class="string">'mag'</span>,<span class="string">'chemColor'</span>,<span class="string">'yellow'</span>,<span class="string">'ionColor'</span>,<span class="string">'r'</span>,<span class="string">'copy'</span>,false);
 
-R = sw_rotmatd([1 0 -0.2],-80);
+R = s_rotmatd([1 0 -0.2],-80);
 swplot.transform(R)
 swplot.translate
 </pre><img vspace="5" hspace="5" src="tutorial35_02.png" style="width:560px;height:420px;" alt=""> <h2 id="4">Direct input of the magnetic structure</h2><p>We input directly the antiferromagnetic structure.</p><pre class="codeinput">luvo.genmagstr(<span class="string">'mode'</span>,<span class="string">'helical'</span>,<span class="string">'S'</span>,[0 0 1]',<span class="string">'n'</span>,[0 1 0],<span class="string">'k'</span>,[0 1 1]);
@@ -219,7 +219,7 @@ luvo.addaniso('K')
 plot(luvo,'chemMode','poly','chemAtom1','V','chemAtom2','O','chemLimit',6,...
     'atomMode','mag','chemColor','yellow','ionColor','r','copy',false);
 
-R = sw_rotmatd([1 0 -0.2],-80);
+R = s_rotmatd([1 0 -0.2],-80);
 swplot.transform(R)
 swplot.translate
 

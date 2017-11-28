@@ -12,7 +12,7 @@ kag.quickham(1)
 
 %% eig
 
-Q = sw_qgrid('bin',{[0 0.05 2] [0 0.05 2]});
+Q = s_qgrid('bin',{[0 0.05 2] [0 0.05 2]});
 
 chi = kag.fourier(reshape(Q,3,[]));
 
@@ -36,7 +36,7 @@ end
 
 kag.setunit('mode','1')
 T = 10.^linspace(-2,2,41);
-Q = sw_qgrid('bin',{[0 0.05 2] [0 0.05 2]});
+Q = s_qgrid('bin',{[0 0.05 2] [0 0.05 2]});
 spec = kag.scga(Q,'T',T,'plot',true,'nInt',1e4);
 
 figure
@@ -46,7 +46,7 @@ semilogx(spec.T,spec.lambda,'o-')
 
 kag.setunit('mode','1')
 T = 1;
-Q = sw_qgrid('bin',{[0 0.05 4] [0 0.05 4]});
+Q = s_qgrid('bin',{[0 0.05 4] [0 0.05 4]});
 spec = kag.scga2(Q,'T',T,'plot',true,'nInt',1e4);
 
 

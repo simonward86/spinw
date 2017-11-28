@@ -19,8 +19,8 @@ if nargin == 0
 end
 
 % create search database for the help
-%builddocsearchdb([sw_rootdir 'help' filesep 'html']);
-%builddocsearchdb([sw_rootdir 'html']);
+%builddocsearchdb([s_rootdir 'help' filesep 'html']);
+%builddocsearchdb([s_rootdir 'html']);
 
 swVer = sw_version;
 
@@ -31,7 +31,7 @@ end
 
 % get latest revision number
 aDir = pwd;
-cd(sw_rootdir);
+cd(s_rootdir);
 
 %[statSys, revNum] = system('svn info |grep Revision: |cut -c11-');
 
@@ -103,11 +103,12 @@ tempDirName = [tempDirName0 filesep swDirName];
 % initialize the symmetry.dat file
 sw_initialize;
 
-% copy all files from sw_rootdir to the temp folder
-copyfile([sw_rootdir '*'],tempDirName);
+% copy all files from s_rootdir to the temp folder
+copyfile([s_rootdir '*'],tempDirName);
 
 % include extra comment to all m files
-swFiles = rdir([tempDirName filesep 'swfiles' filesep '**' filesep '*.m']);
+swFiles = rdir([tempDirName filesep 'sfiles' filesep '**' filesep '*.m']);
+swFiles = [swFiles rdir([tempDirName filesep 'swfiles' filesep '**' filesep '*.m'])];
 
 % go through all files and add comments
 for ii = 1:numel(swFiles)

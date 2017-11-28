@@ -39,7 +39,7 @@ else
     inpForm.size   = {[1 -1]    [1 -2]  [1 -3] [1 -4]     [1 -5] };
     inpForm.soft   = {false     true    false  false      false  };
     
-    param = sw_readparam(inpForm, varargin{:});
+    param = s_readparam(inpForm, varargin{:});
 end
 
 cmd = [param.path 'terminal-notifier -message "' param.message '" -group "' param.group...

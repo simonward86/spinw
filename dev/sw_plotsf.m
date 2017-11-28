@@ -25,7 +25,7 @@ inpForm.defval = {[]      false true       '-'        };
 inpForm.size   = {[-1 2]  [1 1] [1 1]      [1 -2]     };
 inpForm.soft   = {1       0     0          0          };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 
 if numel(sFact.axis)==3

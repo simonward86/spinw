@@ -40,7 +40,7 @@ function chi = meanfield(obj, hkl, varargin)
 %               calculation. Possible values:
 %                   false   No magnetic form factor is applied (default).
 %                   true    Magnetic form factors are applied, based on the
-%                           label string of the magnetic ions, see sw_mff()
+%                           label string of the magnetic ions, see s_mff()
 %                           function help.
 %                   cell    Cell type that contains mixed labels and
 %                           numbers for every symmetry inequivalent atom in
@@ -50,7 +50,7 @@ function chi = meanfield(obj, hkl, varargin)
 %               correlations on the first atom and using the form factor of
 %               Cr3+ ion for the second atom.
 % formfactfun   Function that calculates the magnetic form factor for given
-%               Q value. Default value is @sw_mff(), that uses a tabulated
+%               Q value. Default value is @s_mff(), that uses a tabulated
 %               coefficients for the form factor calculation. For
 %               anisotropic form factors a user defined function can be
 %               written that has the following header:
@@ -74,11 +74,11 @@ function chi = meanfield(obj, hkl, varargin)
 %
 
 inpForm.fname  = {'Trel' 'formfact' 'formfactfun' 'fitmode' 'gtensor' 'Tc' 'chi' };
-inpForm.defval = {0      false       @sw_mff      false     false     []    []   };
+inpForm.defval = {0      false       @s_mff      false     false     []    []   };
 inpForm.size   = {[1 1]  [1 -1]      [1 1]        [1 1]     [1 1]     [1 1] [1 1]};
 inpForm.soft   = {false  false       false        false     false     true  true };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 fid = obj.fileid;
 
@@ -97,7 +97,7 @@ else
     
     % for linear scans create the Q line(s)
     if nargin > 1
-        hkl = sw_qscan(hkl);
+        hkl = s_qscan(hkl);
     else
         hkl = [];
     end
@@ -216,7 +216,7 @@ end
 
 if isempty(param.Tc)
     % find the critical temperature from the given Q points
-    chi.Tc = sw_converter(2/3*abs(min(chi.omega(:))),'meV','K');
+    chi.Tc = s_converter(2/3*abs(min(chi.omega(:))),'meV','K');
 else
     chi.Tc = param.Tc;
 end
@@ -225,7 +225,7 @@ end
 % mean field temperature in Kelvin from the critical temperature and
 % relative shift
 chi.Tmf = param.Trel + chi.Tc; % K
-Emf = sw_converter(chi.Tmf,'K','meV'); % meV
+Emf = s_converter(chi.Tmf,'K','meV'); % meV
 
 
 % denominator for the mean field susceptibility

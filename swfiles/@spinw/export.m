@@ -70,8 +70,8 @@ inpForm.defval = {''       ''      []      [1 2 3] {'per' 'per' 'per'} };
 inpForm.size   = {[1 -1]   [1 -2] [1 1]    [1 3]   [1 3]               };
 inpForm.soft   = {true     true    true    false   false               };
 
-warnState = warning('off','sw_readparam:UnreadInput');
-param = sw_readparam(inpForm, varargin{:});
+warnState = warning('off','s_readparam:UnreadInput');
+param = s_readparam(inpForm, varargin{:});
 warning(warnState);
 
 % produce the requested output
@@ -90,25 +90,8 @@ if isempty(param.path) && isempty(param.fileid) && nargout == 0
 end
 
 switch param.format
-    case 'pcr'
-        % create .pcr text file
-        outStr = createpcr(obj, param.perm);
     case 'MC'
         outStr = createmc(obj, param.boundary);
-    case 'spt'
-        % create Jmol script file
-        if nargin == 2
-            varargin{1}.format = 'jmol';
-        else
-            varargin{end+1} = 'format';
-            varargin{end+1} = 'jmol';
-            
-        end
-        
-        warnState = warning('off','sw_readparam:UnreadInput');
-        outStr = plot(obj, varargin{:});
-        warning(warnState);
-        
     case ''
         warning('spinw:export:NoInput','No ''format'' option was given, no output is produced!');
         if nargout > 0
@@ -116,7 +99,7 @@ switch param.format
             return
         end
     otherwise
-        error('spinw:export:WrongInput','''format'' has to be one of the strings given in the help!');
+        export@spin(obj,varargin{:})
 end
 
 if nargout > 0

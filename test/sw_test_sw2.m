@@ -197,7 +197,7 @@ function omega = Jensen_LiNiPO4(Q, Jinp)
 %
 
 if iscell(Q)
-    Q = sw_qscan(Q);
+    Q = s_qscan(Q);
 end
 
 h = Q(1,:);

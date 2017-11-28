@@ -31,7 +31,7 @@ inpForm.fname  = {'surfRes' 'rLim' 'P'   'rBohr' 'norm'};
 inpForm.defval = {30        32     1e-5  1       true  };
 inpForm.size   = {[1 1]     [1 1]  [1 1] [1 1]   [1 1] };
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 
 % quantum numbers

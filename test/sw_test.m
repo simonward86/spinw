@@ -18,7 +18,7 @@ function errMsg = sw_test(varargin)
 %
 
 currDir = cd;
-cd(sw_rootdir);
+cd(s_rootdir);
 
 % switch off warnings
 warnLevel = warning;
@@ -28,7 +28,7 @@ inpForm.fname  = {'fid' 'tol' };
 inpForm.defval = {-1    1e-5  };
 inpForm.size   = {[1 1] [1 1] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if param.fid == -1
     param.fid = swpref.getpref('fid',true);
@@ -39,7 +39,7 @@ end
 Res = [];
 errMsg = {};
 
-allTestPath = dir([sw_rootdir 'test' filesep 'sw_test_*.m']);
+allTestPath = dir([s_rootdir 'test' filesep 'sw_test_*.m']);
 allTestPath = {allTestPath.name};
 
 for ii = 1:numel(allTestPath)

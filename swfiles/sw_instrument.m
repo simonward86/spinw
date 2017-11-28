@@ -24,13 +24,13 @@ function spectra = sw_instrument(spectra, varargin)
 %                transfer. The file has to contain two columns,
 %                first is the energy values, the second is the
 %                FWHM resolution at the given energy transfer
-%                value, see [sw_res] function for details.
+%                value, see [s_res] function for details.
 %   * *number*   Constant FWHM energy resolution given by the number.
 %   * *matrix*   Dimensions of $[N\times 2]$, where the first column contains the
 %                energy transfer values, second column contains
 %                the FWHM resolution values. These discrete values will
 %                be fitted using a polynomial with a fixed
-%                degree, see [sw_res] for details.
+%                degree, see [s_res] for details.
 %   * *function* Function handle of a resolution function
 %   with the following header:
 %   ```
@@ -41,7 +41,7 @@ function spectra = sw_instrument(spectra, varargin)
 % 
 % `'func'`
 % : Shape of the energy resolution function if different from Gaussian.
-%   For details see [sw_resconv].
+%   For details see [s_resconv].
 % 
 % `'polDeg'`
 % : Degree of the polynomial that is fitted to the discrete energy 
@@ -113,7 +113,7 @@ function spectra = sw_instrument(spectra, varargin)
 % 
 % ### See Also
 % 
-% [polyfit] \| [polyval] \| [sw_res] \| [sw_resconv]
+% [polyfit] \| [polyval] \| [s_res] \| [s_resconv]
 %
 % *[FWHM]: Full Width at Half Maximum
 %
@@ -135,7 +135,7 @@ inpForm.defval = [inpForm.defval { 'auto'    0     false   true    func0  -1   }
 inpForm.size   = [inpForm.size   { [1 -2]    [1 1] [1 1]   [1 1]   [1 1]  [1 1]}];
 inpForm.soft   = [inpForm.soft   {false      false false   false   false  false}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % Print output
 if param.fid == -1
@@ -184,7 +184,7 @@ if isa(param.dE,'function_handle')
 elseif numel(param.dE)>1
     
     % determine the energy resolution curve from a file or the given matrix
-    param.dE = sw_res(param.dE,param.polDeg,param.plot);
+    param.dE = s_res(param.dE,param.polDeg,param.plot);
     
 end
 
@@ -194,8 +194,8 @@ cEvect = (spectra.Evect(1:(end-1))+spectra.Evect(2:end))/2;
 % include resolution
 if calcres
     for jj = 1:nPlot
-        %spectra.swConv{jj} = sw_resconv(spectra.swConv{jj},cEvect',param.dE);
-        spectra.swConv{jj} = sw_resconv(spectra.swConv{jj},cEvect',param.dE,param.func);
+        %spectra.swConv{jj} = s_resconv(spectra.swConv{jj},cEvect',param.dE);
+        spectra.swConv{jj} = s_resconv(spectra.swConv{jj},cEvect',param.dE,param.func);
     end
     
     fprintf0(fid,'Finite instrumental energy resolution is applied.\n');
@@ -254,7 +254,7 @@ else
 end
 
 if FX>0 && param.k == 0
-    param.k = sw_converter(param.E,'meV','k');
+    param.k = s_converter(param.E,'meV','k');
 end
 
 % save ki/kf value into the output
@@ -277,15 +277,15 @@ if FX > 0
         switch FX
             case 1
                 % fix ki
-                Emax = (k0^2-(k0*cosT-sqrt(Q.^2-k0^2*sinT^2)).^2) * sw_converter(1,'k','meV');
-                Emin = (k0^2-(k0*cosT+sqrt(Q.^2-k0^2*sinT^2)).^2) * sw_converter(1,'k','meV');
+                Emax = (k0^2-(k0*cosT-sqrt(Q.^2-k0^2*sinT^2)).^2) * s_converter(1,'k','meV');
+                Emin = (k0^2-(k0*cosT+sqrt(Q.^2-k0^2*sinT^2)).^2) * s_converter(1,'k','meV');
             case 2
                 % fix kf
-                Emax = -(k0^2-(k0*cosT+sqrt(Q.^2-k0^2*sinT^2)).^2) * sw_converter(1,'k','meV');
-                Emin = -(k0^2-(k0*cosT-sqrt(Q.^2-k0^2*sinT^2)).^2) * sw_converter(1,'k','meV');
+                Emax = -(k0^2-(k0*cosT+sqrt(Q.^2-k0^2*sinT^2)).^2) * s_converter(1,'k','meV');
+                Emin = -(k0^2-(k0*cosT-sqrt(Q.^2-k0^2*sinT^2)).^2) * s_converter(1,'k','meV');
         end
-        %Emax = (ki^2-(ki*cosT-sqrt(Q.^2-ki^2*sinT^2)).^2) * sw_converter(1,'k','meV');
-        %Emin = (ki^2-(ki*cosT+sqrt(Q.^2-ki^2*sinT^2)).^2) * sw_converter(1,'k','meV');
+        %Emax = (ki^2-(ki*cosT-sqrt(Q.^2-ki^2*sinT^2)).^2) * s_converter(1,'k','meV');
+        %Emin = (ki^2-(ki*cosT+sqrt(Q.^2-ki^2*sinT^2)).^2) * s_converter(1,'k','meV');
         
         Emax(abs(imag(Emax))>0) = 0;
         Emin(abs(imag(Emin))>0) = 0;

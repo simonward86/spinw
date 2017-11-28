@@ -52,7 +52,7 @@ if nargout == 0
     end
     
     if nargin == 0
-        installDir = sw_rootdir;
+        installDir = s_rootdir;
         strIdx = strfind(installDir,filesep);
         installDir = installDir(1:strIdx(end-1));
     else
@@ -140,7 +140,7 @@ folName = [installDir strtok(zipList{1}(numel(installDir)+1:end),filesep)];
 
 % remove old SpinW installation from path
 fprintf('\nRemoving path to old SpinW installation!\n')
-rmpath(genpath(sw_rootdir));
+rmpath(genpath(s_rootdir));
 
 % adding new path
 fprintf('Adding path to new SpinW installation: %s!\n',folName);

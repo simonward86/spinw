@@ -52,7 +52,7 @@ inpForm.defval = {''       +4    };
 inpForm.size   = {[1 -1]  [1 1]  };
 inpForm.soft   = {true    false  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 
 if isempty(param.fName)

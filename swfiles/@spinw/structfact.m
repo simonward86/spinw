@@ -1,26 +1,26 @@
 function sFact = structfact(obj, kGrid, varargin)
 % calculates magnetic and nuclear structure factor
-% 
+%
 % ### Syntax
-% 
+%
 % `sFact   = structfact(obj, kGrid,Name,Value)`
 %
 % `sfTable = structfact(obj, kGrid,Name,Value)`
 %
 % ### Description
-% 
+%
 % `sFact   = structfact(obj, kGrid,Name,Value)` returns the calculated
 % structure factors in units of barn. Magnetic structures (FM, AFM and
 % helical) are checked against
 % [FullProf](https://www.ill.eu/sites/fullprof/). The structure factor
 % includes the site occupancy and Debye-Waller factors calculated from
 % `obj.unit_cell.biso`, using the same definition as in FullProf.
-% 
+%
 % ### Input Arguments
-% 
+%
 % `obj`
 % : [spinw] object.
-% 
+%
 % `kGrid`
 % : Defines the reciprocal lattice vectors where the structure
 %      factor is to be calculated. For commensurate structures these
@@ -30,9 +30,9 @@ function sFact = structfact(obj, kGrid, varargin)
 %      lattice vector. In this case still the integer positions have
 %      to be given and the code calculates the intensities at all
 %      three points.
-% 
+%
 % ### Name-Value Pair Arguments
-% 
+%
 % `'mode'`
 % : String, defines the type of calculation:
 %   * `mag`     Magnetic structure factor and intensities for
@@ -41,11 +41,11 @@ function sFact = structfact(obj, kGrid, varargin)
 %               intensities.
 %   * `nucx`    X-ray scattering structure factor and
 %               intensities.
-% 
+%
 % `'sortq'`
 % : Sorting the reflections according to increasing momentum
 %   value if `true`. Default is `false`.
-% 
+%
 % `'formfact'`
 % : If true, the magnetic form factor is included in the structure factor
 %   calculation. The form factor coefficients are stored in
@@ -53,14 +53,14 @@ function sFact = structfact(obj, kGrid, varargin)
 %
 % `'formfactfun'`
 % : Function that calculates the magnetic form factor for given $Q$ value.
-%   value. Default value is `@sw_mff`, that uses a tabulated coefficients
+%   value. Default value is `@s_mff`, that uses a tabulated coefficients
 %   for the form factor calculation. For anisotropic form factors a user
 %   defined function can be written that has the following header:
 %   ```
 %   F = formfactfun(atomLabel,Q)
 %   ```
 %   where the parameters are:
-%   * `F`           row vector containing the form factor for every input 
+%   * `F`           row vector containing the form factor for every input
 %                   $Q$ value
 %   * `atomLabel`   string, label of the selected magnetic atom
 %   * `Q`           matrix with dimensions of $[3\times n_Q]$, where each
@@ -74,28 +74,28 @@ function sFact = structfact(obj, kGrid, varargin)
 % `'lambda'`
 % : Wavelength. If given, the $2\theta$ value for each reflection
 %   is calculated.
-% 
+%
 % `'dmin'`
 % : Minimum $d$-value of a reflection, all higher order
 %   reflections will be removed from the results.
-% 
+%
 % `'output'`
 % : String, defines the type of the output:
 %   * `struct`  Results are returned in a struct type variable,
 %               default.
 %   * `table`   Results are returned in a table type output for
 %               easy viewing and exporting.
-% 
+%
 % `'tol'`
 % : Tolerance of the incommensurability of the magnetic
 %   ordering wavevector. Deviations from integer values of the
 %   ordering wavevector smaller than the tolerance are considered
 %   to be commensurate. Default value is $10^{-4}$.
-% 
+%
 % `'fitmode'`
 % : Speed up the calculation for fitting mode (omitting
 %   cloning the [spinw] object into the output). Default is `false`.
-% 
+%
 % `'fid'`
 % : Defines whether to provide text output. The default value is determined
 %   by the `fid` preference stored in [swpref]. The possible values are:
@@ -105,9 +105,9 @@ function sFact = structfact(obj, kGrid, varargin)
 %           into the opened file stream.
 %
 % ### Output Arguments
-% 
+%
 % `sFact`
- % : Structure with the following fields:
+% : Structure with the following fields:
 %    * `F2`     Magnetic structure factor in a matrix with dimensions
 %               $[3\times n_{hkl}]$.
 %    * `Mk`     Square of the 3 dimensional magnetic structure factor,
@@ -127,14 +127,14 @@ function sFact = structfact(obj, kGrid, varargin)
 % `sfTable`
 % : Table, optional output for quick viewing and saving the output into a
 %   text file.
-% 
+%
 % ### See Also
-% 
-% [sw_qgrid] \| [sw_plotsf] \| [sw_intsf] \| [spinw.anneal] \| [spinw.genmagstr]
+%
+% [s_qgrid] \| [sw_plotsf] \| [sw_intsf] \| [spinw.anneal] \| [spinw.genmagstr]
 %
 
 inpF.fname  = {'mode' 'sortq' 'gtensor' 'formfact' 'formfactfun' 'fitmode'};
-inpF.defval = {'mag'  false   false     false       @sw_mff      false    };
+inpF.defval = {'mag'  false   false     false       @s_mff      false    };
 inpF.size   = {[1 -1] [1 1]   [1 1]     [1 1]       [1 1]        [1 1]    };
 inpF.soft   = {false  false   false     false       false        false    };
 
@@ -142,14 +142,26 @@ inpF.fname  = [inpF.fname  {'lambda' 'output' 'dmin' 'rmzero' 'delta' 'fid'}];
 inpF.defval = [inpF.defval {[]       'struct' []     false    1e-10   -1   }];
 inpF.size   = [inpF.size   {[1 1]    [1 -2]   [1 1]  [1 1]    [1 1]   [1 1]}];
 inpF.soft   = [inpF.soft   {true     false    true   false    false   false}];
-  
-param = sw_readparam(inpF, varargin{:});
+
+param = s_readparam(inpF, varargin{:});
 
 if param.fid == -1
     fid = swpref.getpref('fid',[]);
 else
     fid = param.fid;
 end
+
+% Deal with the non-magnetic case
+if param.mode ~= 'mag'
+    if nargout > 1
+        sFact = structfact@spin(obj, kGrid, varargin{:});
+        return
+    else
+        structfact@spin(obj, kGrid, varargin{:})
+        return
+    end
+end
+
 
 % make a list of k-vectors from a grid and remember original dimensions
 kDim  = size(kGrid);
@@ -203,7 +215,7 @@ switch param.mode
         sFact.Sperp = zeros(nQ,nK);
         sFact.hklA  = zeros(3,nQ,nK);
         sFact.d     = zeros(1,nQ,nK);
-
+        
         % loop over all prop vector to add the -km to the list
         idx = 1;
         for ii = 1:nK0
@@ -239,7 +251,7 @@ switch param.mode
             kPerm = permute(iSign(ii)*hklKm,[1 3 2]);
             % include exp() factor
             F1 = bsxfun(@times,F1,exp(sum(bsxfun(@times,1i*2*pi*matom.r,kPerm),1)));
-
+            
             % d-spacing in Angstrom units [1 nQ nK]
             sFact.d(:,:,ii) = 2*pi./sqrt(sum(sFact.hklA(:,:,ii).^2,1));
             % Debye-Waller factor [1 nMagAtom nQ]
@@ -272,37 +284,6 @@ switch param.mode
             % sum up for non-polarized calculation, keep only the real part
             sFact.Sperp(:,ii) = constM*real(permute(sumn(sFact.Sab(:,:,:,ii),[1 2]),[3 1 2 4]));
         end
-
-    case 'nucn'
-        % nuclear structure factor
-        % including occupancy & isotropic displacement
-
-        % precalculation the atoms in the unit cell
-        atom = obj.atom;
-        % scattering length, convert to sqrt(barn)
-        bc = obj.unit_cell.b(1,atom.idx)*0.1;
-        
-        sFact.hklA = (hkl'*obj.rl)';
-        % d-spacing in Angstrom units [1 nQ]
-        sFact.d = 2*pi./sqrt(sum(sFact.hklA.^2,1));
-        % Debye-Waller factor [1 nAtom nQ]
-        Wd = bsxfun(@times,biso(atom.idx),permute(1./(sFact.d.^2),[1 3 2]))/4;
-        
-        % nuclear unit-cell structure factor (fast, but takes lots of memory)
-        % [1 1 nQ]
-        F1 = sum(bsxfun(@times,bc.*occ(atom.idx),exp(-Wd+2*pi*1i*sum(bsxfun(@times,atom.r,permute(hkl,[1 3 2])),1))),2);
-        % cross section
-        sFact.Sperp = permute(F1.*conj(F1),[3 1 2]);
-        
-        % no magnetic wave vector
-        nK = 1;
-        % no magnetic form factor
-        param.formfact = false;
-        
-    case 'nucx'
-        fprintf('X-ray structure factor calculation is not implemented yet!')
-    otherwise
-        error('spinw:structfact:WrongInput','Wrong ''mode'' string!')
 end
 
 if param.sortq
@@ -393,17 +374,13 @@ switch param.output
             case 'mag'
                 dStr = 'magnetic neutron';
                 sTab.km    = sFact.km';
-            case 'nucn'
-                dStr = 'nuclear neutron';
-            case 'nucx'
-                dStr = 'X-ray';
         end
         sTab.F2 = sFact.Sperp';
         sTab.d  = sFact.d';
         sTab.Properties.VariableUnits(1:3)  = {'r.l.u.' 'r.l.u.' 'r.l.u.'};
         sTab.Properties.VariableUnits{'F2'} = 'barn';
         sTab.Properties.VariableUnits{'d'}  = obj.unit.label{1};
-
+        
         sTab.Properties.Description = ['Calculated ' dStr ' scattering cross section'];
         sTab.Properties.UserData.obj   = sFact.obj;
         sTab.Properties.UserData.param = sFact.param;

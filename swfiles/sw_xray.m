@@ -26,7 +26,7 @@ function spectra = sw_xray(spectra, varargin)
 %
 % `'formfactfun'`
 % : Function that calculates the magnetic form factor for given $Q$ value.
-%   value. Default value is `@sw_mff`, that uses a tabulated coefficients
+%   value. Default value is `@s_mff`, that uses a tabulated coefficients
 %   for the form factor calculation. For anisotropic form factors a user
 %   defined function can be written that has the following header:
 %   ```
@@ -68,10 +68,10 @@ if nargin == 0
 end
 
 inpForm.fname  = {'formfact' 'formfactfun' 'fid'};
-inpForm.defval = {true        @sw_cff      -1   };
+inpForm.defval = {true        @s_cff      -1   };
 inpForm.size   = {[1 -1]      [1 1]        [1 1]};
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 % loop over the twins
 if ~iscell(spectra.Sab)
@@ -153,7 +153,7 @@ aLabel = obj.unit_cell.label(atom.idx);
 % get mass
 M = zeros(1,numel(aLabel));
 for ii = 1:numel(aLabel)
-    M(ii) = sw_atomdata(aLabel{ii},'mass');
+    M(ii) = s_atomdata(aLabel{ii},'mass');
 end
 
 % apply the X-ray scattering formula

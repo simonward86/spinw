@@ -41,7 +41,7 @@ inpForm.defval = {1      []      'sf'    []   };
 inpForm.size   = {[1 -1] [-1 2]  [1 -2]  [1 1]};
 inpForm.soft   = {0      1       0       1    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 switch param.type
     case 'sf'

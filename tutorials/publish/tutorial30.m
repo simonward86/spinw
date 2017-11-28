@@ -6,7 +6,7 @@
 help swfiles
 
 % To find the location of the spinw library use
-sw_rootdir
+s_rootdir
 
 % To open any of the functions in the Matlab editor, use
 edit spinw.plot

@@ -28,7 +28,7 @@ inpForm.fname  = {'n'     'sub'     };
 inpForm.defval = {[0 0 1] 1:nMagExt };
 inpForm.size   = {[1 3]   [1 -1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % Fourier transform of the magnetic interactions
 if obj.symbolic

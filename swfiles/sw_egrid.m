@@ -200,7 +200,7 @@ inpForm.defval = [inpForm.defval {false       true       'ebin'  }];
 inpForm.size   = [inpForm.size   {[1 1]      [1 1]      [1 -5]  }];
 inpForm.soft   = [inpForm.soft   {false      false      false   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 switch param.binType
     case 'ebin'

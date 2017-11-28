@@ -42,7 +42,7 @@ luvo.addaniso('K')
 plot(luvo,'chemMode','poly','chemAtom1','V','chemAtom2','O','chemLimit',6,...
     'atomMode','mag','chemColor','yellow','ionColor','r','copy',false);
 
-R = sw_rotmatd([1 0 -0.2],-80);
+R = s_rotmatd([1 0 -0.2],-80);
 swplot.transform(R)
 swplot.translate
 

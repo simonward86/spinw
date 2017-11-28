@@ -32,11 +32,14 @@ inpForm.fname  = {'test' 'compile' 'swtest' };
 inpForm.defval = {false  true      false    };
 inpForm.size   = {[1 1]  [1 1]     [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if param.compile
     % save current folder
     aDir = pwd;
+    eig_omp_dir = [s_rootdir filesep 'external' filesep 'eig_omp'];
+    chol_omp_dir = [s_rootdir filesep 'external' filesep 'chol_omp'];
+    mtimesx_dir = [s_rootdir filesep 'external' filesep 'mtimesx'];
     % compile the mex files
     if ispc
         cd([sw_rootdir filesep 'external' filesep 'eig_omp']);

@@ -65,7 +65,7 @@ inpForm.fname  = {'forceNoSym' 'nUnitCell' 'maxDistance' 'tol' 'tolDist' 'dMin' 
 inpForm.defval = {false        3           8             1e-5  1e-3      0.5    0        };
 inpForm.size   = {[1 1]        [1 1]       [1 1]         [1 1] [1 1]     [1 1]  [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 tol   = param.tol;
 tolD  = param.tolDist;
 

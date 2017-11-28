@@ -78,10 +78,10 @@ afc.addcoupling(<span class="string">'J2-'</span>,5)
 afc.addaniso(<span class="string">'A'</span>)
 <span class="comment">%afc.optmagsteep;</span>
 plot(afc,<span class="string">'range'</span>,[2 1 1])
-</pre><pre class="codeoutput error">Error using sw_readparam (line 105)
+</pre><pre class="codeoutput error">Error using s_readparam (line 105)
 Necessary input option is missing 'mat'
 Error in spinw/addcoupling (line 69)
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 Error in tutorial22 (line 10)
 afc.addcoupling('J1',1)</pre><h2 id="2">opt magnetic structure</h2><pre class="codeinput"><span class="comment">%afc.field([0 0 7])</span>
 afc.optmagstr(<span class="string">'func'</span>,@gm_spherical3d,<span class="string">'xmin'</span>,[0 0, 0 0 0,0 0],<span class="string">'xmax'</span>,[pi/2 0,1/2 0 0,0 0])

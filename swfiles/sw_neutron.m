@@ -100,7 +100,7 @@ inpForm.defval = {[0 0 1] false  {}    };
 inpForm.size   = {[1 3]   [1 1] [1 2] };
 inpForm.soft   = {false   false true  };
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 % normal to the scattering plane in xyz coordinate system
 if numel(param.uv) == 0

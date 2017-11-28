@@ -198,7 +198,7 @@ inpForm.fname  = [inpForm.fname  {'log' 'plotf'  'maxPatch' 'x0'  'qlabel' }];
 inpForm.defval = [inpForm.defval {false @sw_surf 1000       [0 1] cell(1,0)}];
 inpForm.size   = [inpForm.size   {[1 1] [1 1]    [1 1]      [1 2] [1 -7]   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % plotmode string
 if numel(param.mode)>1
@@ -719,7 +719,7 @@ if param.mode == 3
         for ii = 1:nPlot
             vMat(:,:,ii) = swConv{ii};%.*mask{ii};
         end
-        cMat = sw_multicolor(vMat, param.colormap, axLim, param.nCol,true);
+        cMat = s_multicolor(vMat, param.colormap, axLim, param.nCol,true);
         % plot image piece-by-pice for the different Q directions
         if iscell(xLabel)
             xCut  = xLabel{end};

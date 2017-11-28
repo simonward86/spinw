@@ -1,7 +1,8 @@
 %% setup help generator options
 
-swPath  = {'swfiles/@spinw' 'swfiles' 'swfiles/+swplot' 'swfiles/+swpref' 'swfiles/+swsym' 'swfiles/+swfunc' 'swfiles/+ndbase'};
-swr     = sw_rootdir;
+swPath  =   {'sfiles/@spin' 'sfiles' 'swfiles/@spinw' 'swfiles' 'swfiles/+swplot' 'sfiles/+swplot' 'sfiles/+swpref' 'sfiles/+swsym' 'sfiles/+swfunc'};
+done    = +~[true           true     true             true      true              true              true              true             true             ];   
+swr     = s_rootdir;
 swPath  = cellfun(@(C)[swr C],swPath,'UniformOutput',false);
 swver   = sw_version;
 outPath = '~/spinwdoc_git';

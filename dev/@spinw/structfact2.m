@@ -40,7 +40,7 @@ inpF.fname  = {'fExt'  'S'           };
 inpF.defval = {[1 1 1] obj.mag_str.S };
 inpF.size   = {[1 3]   [3 -1]        };
 
-param    = sw_readparam(inpF, varargin{:});
+param    = s_readparam(inpF, varargin{:});
 
 fExt     = param.fExt;
 matom    = obj.matom;

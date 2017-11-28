@@ -183,7 +183,7 @@ inpForm.defval = [inpForm.defval {20        1     0        tid0   true    }];
 inpForm.size   = [inpForm.size   {[1 1]  	[1 1] [1 1]    [1 1]  [1 1]   }];
 inpForm.soft   = [inpForm.soft   {false  	false false    false  false   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % number of parameters (length of x)
 nPar = max(max(length(param.xmin),length(param.xmax)),length(param.x0));
@@ -227,7 +227,7 @@ dat.x = (1:numel(dat.y))';
 dat.y = dat.y(:);
 dat.e = dat.e(:);
 
-sw_timeit(0,1,param.tid,'Fitting spin wave spectra');
+s_timeit(0,1,param.tid,'Fitting spin wave spectra');
 
 idx = 1;
 idxAll = 1;
@@ -283,10 +283,10 @@ while idx <= nRun
     %         end
     %     end
     idxAll = idxAll + 1;
-    sw_timeit(idx/nRun*100,0,param.tid);
+    s_timeit(idx/nRun*100,0,param.tid);
 end
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid);
 
 % Sort results
 [redX2, sortIdx] = sort(redX2);

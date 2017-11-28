@@ -35,7 +35,7 @@ function res = fourier2(obj,hkl,varargin)
 
 % for linear scans create the Q line(s)
 if nargin > 1
-    hkl = sw_qscan(hkl);
+    hkl = s_qscan(hkl);
 else
     hkl = [];
 end
@@ -50,7 +50,7 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = s_readparam(inpForm, varargin{:});
         
         if ~param0.fitmode
             fprintf0(obj.fileid,['No symbolic hkl value was given, Fourier'...
@@ -74,7 +74,7 @@ inpForm.fname  = {'fitmode'};
 inpForm.defval = {false    };
 inpForm.size   = {[1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 
 % Create the interaction matrix and atomic positions in the extended

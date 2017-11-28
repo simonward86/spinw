@@ -36,7 +36,7 @@ if nargout <= 3
     % Angles in the spin plane.
     phi = x(1:nMagExt)*pi/180;
     
-    [u, v] = sw_cartesian(n');
+    [u, v] = s_cartesian(n');
     
     if numel(M0)==1
         M = (u*cos(phi) + v*sin(phi))*M0;

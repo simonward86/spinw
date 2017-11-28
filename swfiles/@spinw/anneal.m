@@ -240,7 +240,7 @@ inpForm.defval = [inpForm.defval {0       false     }];
 inpForm.size   = [inpForm.size   {[1 1]   [1 1]     }];
 inpForm.soft   = [inpForm.soft   {0       false     }];
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 if param.nStat > param.nMC
     warning('spinw:anneal:wrongParam','nStat is larger than nMC, instead of the given value, nMC will be used!');

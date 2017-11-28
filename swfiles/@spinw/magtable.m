@@ -72,7 +72,7 @@ mAtom = obj.matom;
 nExt  = obj.magstr.N_ext;
 
 % Create mAtom.Sext matrix.
-mAtom    = sw_extendlattice(nExt, mAtom);
+mAtom    = s_extendlattice(nExt, mAtom);
 
 if isempty(moments.M)
     moments.R = zeros(3,0);

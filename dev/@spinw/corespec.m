@@ -111,7 +111,7 @@ inpForm.fname  = {'fitmode' 'sortMode' 'optmem' 'tol'  'omega_tol' 'hermit' };
 inpForm.defval = {false     true       0        1e-4  1e-5        true     };
 inpForm.size   = {[1 1]     [1 1]      [1 1]    [1 1] [1 1]       [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 if param.fitmode
     param.sortMode = false;
@@ -180,7 +180,7 @@ JJ = cat(3,reshape(SS.all(6:end,:),3,3,[]),SI.aniso);
 
 if incomm
     % transform JJ due to the incommensurate wavevector
-    [~, K] = sw_rot(n,km*dR*2*pi);
+    [~, K] = s_rot(n,km*dR*2*pi);
     % multiply JJ with K matrices for every interaction
     % and symmetrising JJ for the rotating basis
     JJ = (mmat(JJ,K)+mmat(K,JJ))/2;
@@ -218,9 +218,9 @@ idxD2 = [atom2'+nMagExt atom2'+nMagExt ];
 idxMF = [(1:2*nMagExt)' (1:2*nMagExt)' ];
 
 if param.optmem == 0
-    freeMem = sw_freemem;
+    freeMem = s_freemem;
     if freeMem > 0
-        nSlice = ceil(nMagExt^2*nHkl*6912/sw_freemem*2);
+        nSlice = ceil(nMagExt^2*nHkl*6912/s_freemem*2);
     else
         nSlice = 1;
         warning('spinw:corespec:FreeMemSize','The size of the free memory is unkown, no memory optimisation!');

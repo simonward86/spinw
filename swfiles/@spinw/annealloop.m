@@ -46,7 +46,7 @@ function stat = annealloop(obj, varargin)
 % : Determines if the elapsed and required time for the calculation is
 %   displayed. The default value is determined by the `tid` preference
 %   stored in [swpref]. The following values are allowed (for more details
-%   seee [sw_timeit]):
+%   seee [s_timeit]):
 %   * `0` No timing is executed.
 %   * `1` Display the timing in the Command Window.
 %   * `2` Show the timing in a separat pup-up window.
@@ -96,7 +96,7 @@ inpForm.defval = [inpForm.defval {1       func0  false     -1   }];
 inpForm.size   = [inpForm.size   {[-3 -4] [1 1]  [1 1]     [1 1]}];
 inpForm.soft   = [inpForm.soft   {false   false  false     false}];
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 if param.tid == -1
     param.tid = swpref.getpref('tid',[]);
@@ -113,7 +113,7 @@ if any(obj.field) && ~isempty(obj.single_ion.g)
     warning('spinw:annealloop:NotSupported','User defined g-tensors are currently not supported, g=2 will be assumed!')
 end
 
-sw_timeit(0,1,param.tid,'Parameter sweep for simulated annealing');
+s_timeit(0,1,param.tid,'Parameter sweep for simulated annealing');
 
 stat = struct;
 
@@ -123,7 +123,7 @@ for ii = 1:nLoop
     param.func(obj,param.x(:,ii));
     
     % do the annealing procedure
-    warnState = warning('off','sw_readparam:UnreadInput');
+    warnState = warning('off','s_readparam:UnreadInput');
     paramF = param;
     paramF.fastmode = ~param.saveObj;
     aRes{ii} = obj.anneal(paramF);
@@ -160,7 +160,7 @@ for ii = 1:nLoop
         warning('TODO');
     end
     
-    sw_timeit(ii/nLoop*100,0,param.tid);
+    s_timeit(ii/nLoop*100,0,param.tid);
 end
 
 % save extra information
@@ -169,6 +169,6 @@ stat.state = aRes;
 stat.x     = param.x;
 stat.param = param;
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid);
 
 end

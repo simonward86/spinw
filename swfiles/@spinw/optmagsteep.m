@@ -133,7 +133,7 @@ inpForm.size   = [inpForm.size   {[1 3]  [1 1]    [1 1]  [1 -2]  [1 1]     [1 1]
 inpForm.soft   = [inpForm.soft   {0      0        0      0        0        false  false}];
 
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 if prod(param.nExt) == 0
     error('spinw:optmagsteep:WrongInput','''nExt'' has to be larger than 0!');
@@ -270,10 +270,10 @@ if any(km)
     % Rotate the coupling matrices that couple spins in different unit cells
     % Si * Jij * Sj' = Si * Jij * R * Sj
     % Sj' = R(km,dl) * Sj
-    [~,R] = sw_rot(magStr.n,km*SS.all(1:3,:)*2*pi);
+    [~,R] = s_rot(magStr.n,km*SS.all(1:3,:)*2*pi);
     Jrot  = mmat(reshape(SS.all(6:14,:),3,3,[]),R);
     JJR   = reshape(Jrot,9,[]);
-    [~,R] = sw_rot(magStr.n,-km*SS.all(1:3,:)*2*pi);
+    [~,R] = s_rot(magStr.n,-km*SS.all(1:3,:)*2*pi);
     Jrot  = mmat(reshape(SS.all(trIdx,:),3,3,[]),R);
     JJTR  = reshape(Jrot,9,[]);
 else
@@ -333,7 +333,7 @@ for ii = 1:nSub
 end
 
 if fid == 1
-    sw_timeit(0,1,'Magnetic structure optimization');
+    s_timeit(0,1,'Magnetic structure optimization');
 end
 
 if nargout == 1
@@ -435,13 +435,13 @@ while (rIdx < nRun) && (dM>param.TolX)
     end
     
     if fid == 1
-        sw_timeit(rIdx/param.nRun*100);
+        s_timeit(rIdx/param.nRun*100);
     end
 
 end
 
 if fid == 1
-    sw_timeit(100,2);
+    s_timeit(100,2);
 else
     if fid ~= 0
         fprintf0(fid,'Calculation finished.\n');

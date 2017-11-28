@@ -39,7 +39,7 @@ inpForm.fname  = {'r0'    'v1'    'v2'    'scale' 'plotv'};
 inpForm.defval = {[0 0 0] [1 0 0] [0 1 0] 1       false  };
 inpForm.size   = {[1 3]   [1 3]   [1 3]   [1 1]   [1 1]  };
 
-param = sw_readparam(inpForm,varargin{:});
+param = s_readparam(inpForm,varargin{:});
 
 v1 = param.v1;
 v2 = param.v2;
@@ -73,7 +73,7 @@ rotAxis  = cross([0 0 1],n);
 rotAngle = acos([0 0 1]*n'/norm(n));
 
 if abs(rotAngle) > 1e-5
-    [~, R] = sw_rot(rotAxis,rotAngle);
+    [~, R] = s_rot(rotAxis,rotAngle);
     surfO.vertices = surfO.vertices*R';
 else
     R = eye(3);
@@ -86,7 +86,7 @@ rotAngle2 = acos(xp*v1'/norm(v1));
 
 if abs(rotAngle2) > 1e-5
     % rotate away from the ions
-    [~, R2] = sw_rot(rotAxis2,rotAngle2);
+    [~, R2] = s_rot(rotAxis2,rotAngle2);
     surfO.vertices = surfO.vertices*R2';
 end
 

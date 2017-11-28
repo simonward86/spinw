@@ -95,7 +95,7 @@ function optm = optmagstr(obj, varargin)
 % : Determines if the elapsed and required time for the calculation is
 %   displayed. The default value is determined by the `tid` preference
 %   stored in [swpref]. The following values are allowed (for more details
-%   see [sw_timeit]):
+%   see [s_timeit]):
 %   * `0` No timing is executed.
 %   * `1` Display the timing in the Command Window.
 %   * `2` Show the timing in a separat pup-up window.
@@ -172,8 +172,8 @@ inpForm.size   = [inpForm.size   {[1 1]  [1 1]    [1 1]         [1 1]  [1 1]    
 inpForm.soft   = [inpForm.soft   {0      0        0             0      0         1       false}];
 
 % creat initial magnetic structure
-warnState = warning('off','sw_readparam:UnreadInput');
-param = sw_readparam(inpForm, varargin{:});
+warnState = warning('off','s_readparam:UnreadInput');
+param = s_readparam(inpForm, varargin{:});
 
 obj.genmagstr(param);
 
@@ -213,7 +213,7 @@ if nargout(param.func) == 6
     inpForm.size   = repmat({[1 2]},1,nPar);
     inpForm.soft   = repmat({1},1,nPar);
     % test input parameters
-    fparam = sw_readparam(inpForm, varargin{:});
+    fparam = s_readparam(inpForm, varargin{:});
     warning(warnState);
     for ii = 1:nPar
         if ~isempty(fparam.(inpForm.fname{ii}))
@@ -267,7 +267,7 @@ Bg  = permute(mmat(SI.field,g)*obj.unit.muB,[2 3 1]);
 minE = 0;
 minX = zeros(1,nPar);
 
-sw_timeit(0,1,param.tid,'Optimizing magnetic structure');
+s_timeit(0,1,param.tid,'Optimizing magnetic structure');
 
 dx = param.xmax - param.xmin;
 
@@ -286,11 +286,11 @@ for ii = 1:param.nRun
         minX = X;
     end
     
-    sw_timeit(ii/param.nRun*100,0,param.tid);
+    s_timeit(ii/param.nRun*100,0,param.tid);
         
 end
 
-sw_timeit(100,2,param.tid);
+s_timeit(100,2,param.tid);
 
 [M, k, n] = param.func(S, minX);
 
@@ -335,7 +335,7 @@ incomm = any(abs(k-round(k))>epsilon);
 if incomm && any(any(dR))
     dRIdx = find(any(dR));
     for ii = 1:length(dRIdx)
-        M2(:,dRIdx(ii)) = sw_rot(n, kExt*dR(:,dRIdx(ii))*2*pi, M2(:,dRIdx(ii)));
+        M2(:,dRIdx(ii)) = s_rot(n, kExt*dR(:,dRIdx(ii))*2*pi, M2(:,dRIdx(ii)));
     end
 end
 

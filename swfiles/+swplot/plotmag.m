@@ -172,7 +172,7 @@ inpForm.defval = [inpForm.defval {0.5      0.07   false      false        false}
 inpForm.size   = [inpForm.size   {[1 1]   [1 1]   [1 1]      [1 1]        [1 1]}];
 inpForm.soft   = [inpForm.soft   {false   false   false      false        false}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % find swplot figure
 if isempty(param.figure)
@@ -258,7 +258,7 @@ mAtom    = obj.matom;
 %nMagAtom = size(mAtom.r,2);
 
 % atom positions in the plotting range
-mAtomExt = sw_extendlattice(nExtPlot,mAtom);
+mAtomExt = s_extendlattice(nExtPlot,mAtom);
 
 pos = bsxfun(@plus,bsxfun(@times,mAtomExt.RRext,nExtPlot'),luOrigin');
 

@@ -54,7 +54,7 @@ inpForm.fname  = {'hFigure' 'pAmp' 'rps' 'fps' 'nCycle' 'phi0' 'tMax' 'dMagnon' 
 inpForm.defval = {0         1      1     25    Inf      0      0      0.05      'auto'    0.5       30       };
 inpForm.size   = {[1 1]     [1 1]  [1 1] [1 1] [1 1]   [1 1]   [1 1]  [1 1]     [1 -1]    [1 1]     [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = s_readparam(inpForm, varargin{:});
 
 % figure handle
 if param.hFigure>0
