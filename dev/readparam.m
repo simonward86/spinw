@@ -112,7 +112,7 @@ classdef readparam < dynamicprops
             % [swpref.get], [swpref.set]
             %
             
-            mustHave_Names = {'fname', 'defval','size'};
+            mustHave_Names = {'fname', 'defval', 'size'};
             optional_Names = {'validation','label'};
             Name_value = cellfun(@(x) {x ,[]},[mustHave_Names optional_Names],'UniformOutput',false);
             Name_value = horzcat(Name_value{:});
@@ -121,24 +121,27 @@ classdef readparam < dynamicprops
             if nargin == 0
                 error('readparam:InvalidOptions','A format structure or options must be given.')
             elseif nargin > 1
-                if ~mod(nargin,2)
+                if mod(nargin,2)
                     error('readparam:InvalidOptions','Valid parameter/value pairs must be give.')
                 else
-                    supplied_opt_p = varargin{1:2:end};
-                    supplied_opt_v = varargin{2:2:end};
+                    supplied_opt_p = varargin(1:2:end);
+                    supplied_opt_v = varargin(2:2:end);
                     for i = 1:length(supplied_opt_p)
                        if ~any(strcmp(supplied_opt_p{i},[mustHave_Names optional_Names]))
                            error('readparam:InvalidOptions','%s is not a parameter/value pairs must be give.', supplied_opt_p{i})
                        elseif strcmp(supplied_opt_p{i},'size')
                             if isempty(Name_value.validation)
-                                Name_value.validation = cellfun(@str2func,cellfun(@(x) sprintf('obj.check_size(obj.(''%s'')[%s, %s])',...
-                                    supplied_opt_p{i},x(1), x(2)), supplied_opt_v{i},'UniformOutput',false),'UniformOutput',false);
+%                                 Name_value.validation = cellfun(@str2func,...
+                                Name_value.validation = ...
+                                cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%i, %i],x)', x(1), x(2)),supplied_opt_v{i},'UniformOutput',false);
+%                                     Name_value.fname, supplied_opt_v{i},'UniformOutput',false),'UniformOutput',false);
                                 ind = cellfun(@(x) x(2) < 0, supplied_opt_v{i});
                                 unique_match = unique(cellfun(@(x) x(2),supplied_opt_v{i}(ind)));
                                 if length(unique_match) == length(supplied_opt_v{i}(ind))
                                     % The length is not fixed, replace by NaN 
-                                    Name_value.validation(ind) = cellfun(@str2func,cellfun(@(x) sprintf('obj.check_size(obj.(''%s'')[%s, NaN])',...
-                                    supplied_opt_p{i},x(1)), supplied_opt_v{i}(ind),'UniformOutput',false),'UniformOutput',false);
+                                    Name_value.validation(ind) = cellfun(@str2func,...
+                                        cellfun(@(y,x) sprintf('check_size(obj,''%1$s'',[%2$i, NaN])',y,x(1)),...
+                                        Name_value.fname(ind),supplied_opt_v{i}(ind),'UniformOutput',false),'UniformOutput',false);
                                 else
                                     % One vairable depends on another one..
                                     
@@ -157,34 +160,14 @@ classdef readparam < dynamicprops
             
             obj.Name = Name_value.fname;
             obj.Value = Name_value.defval;
-            obj.Label = data.Label;
-            obj.Validation = data.Validation;
-
-            if opt && ~isempty(sPref)
-                f = fieldnames(sPref);
-                for i = 1:length(f)
-                    ind = strcmp(f{i},obj.Name);
-                    if any(ind)
-                        obj.Value{ind} = sPref.(f{i});
-                    end
-                end
-            else
-                f = obj.Name;
-                for i = 1:length(f)
-                    obj.get_set_static(f{i},obj.Value{i});
-                    sPref.(f{i}) = obj.Value{i};
-                end
-            end
+            obj.Label = Name_value.label;
+            obj.Validation = Name_value.validation;
             
-            for i = 1:length(data.Name)
+            for i = 1:length(obj.Name)
                 obj.props(i) = addprop(obj,obj.Name{i});
                 obj.props(i).SetMethod = @(obj, val) set_data(obj,obj.Name{i}, val);
                 obj.props(i).GetMethod = @(obj) get_data(obj,obj.Name{i});
-                if isfield(sPref,obj.Name{i})
-                    obj.(obj.Name{i}) = sPref.(obj.Name{i});
-                else
-                    obj.(obj.Name{i}) = obj.Value{i};
-                end
+                obj.(obj.Name{i}) = obj.Value{i};
             end
         end
         
@@ -209,7 +192,7 @@ classdef readparam < dynamicprops
             %
             
             if nargin == 1
-                error('swpref:GetError','You need to supply a parameter to get!');
+                error('readparam:GetError','You need to supply a parameter to get!');
             end
             
             if iscell(names)
@@ -219,14 +202,14 @@ classdef readparam < dynamicprops
                         varargout{j} = obj.(names{i}); %#ok<AGROW>
                         j = j+1;
                     else
-                        error('swpref:GetError','There is no field %s in swpref',names{i});
+                        error('readparam:GetError','There is no field %s in swpref',names{i});
                     end
                 end
             else
                 if obj.check_names(names)
                     varargout{1} = obj.(names);
                 else
-                    error('swpref:GetError','There is no field %s in swpref',names);
+                    error('readparam:GetError','There is no field %s in swpref',names);
                 end
             end
         end
@@ -234,6 +217,40 @@ classdef readparam < dynamicprops
     end
     
     methods (Hidden=true, Access = private)
+        
+        function set_data(obj, name, val)
+            % Function called when a vairable is retrieved.
+            %
+            %  {{warning Internal function for the Spin preferences.}}
+            %
+            % ### Syntax
+            %
+            % 'value = get_data(obj, name)'
+            %
+            % ### Description
+            %
+            % 'value = get_data(obj, name)' returns the value of parameter
+            % 'name' from persistent storage.
+            %
+            % ### See Also
+            %
+            % [swpref.setpref], [swpref.set_data]
+            %
+            
+            if obj.check_names(name)
+                ind = strcmp(name,obj.Name);
+                validation = obj.Validation(ind);
+                for i = 1:length(validation)
+                    if ischar(validation{i})
+                        validation{i} = str2func(validation{i});
+                    end
+                    feval(validation{i},obj,val)
+                end
+                obj.(name) = val;
+            else
+                error('readparam:SetError','There is no field %s in swpref',name);
+            end
+        end
         
         function val = get_data(obj, name)
             % Function called when a vairable is retrieved.
@@ -255,9 +272,9 @@ classdef readparam < dynamicprops
             %
             
             if obj.check_names(name)
-                val = obj.get_set_static(name);
+                val = obj.(name);
             else
-                error('swpref:GetError','There is no field %s in swpref',name);
+                error('readparam:GetError','There is no field %s in swpref',name);
             end
         end
         
@@ -279,7 +296,7 @@ classdef readparam < dynamicprops
             valid = any(strcmp(name,fieldnames(obj)));
         end
         
-        function out = check_size(obj,S)
+        function out = check_size(obj,reference,value)
             % checks to see if an object is the wrong size.
             %
             %  {{warning Internal function for the Spin preferences.}}
@@ -294,13 +311,22 @@ classdef readparam < dynamicprops
             % object 'obj 'is the expected size given by 'size'. An error is
             % thrown if there is a difference.
             %
-            
-            sz = size(obj);
-            if isnan(S(2))
-               S(2) = sz(end); 
+            if ischar(reference)
+                try
+                    ref_mat = eval(reference);
+                catch
+                    ref_mat = obj.(reference);
+                end
+                ref_size = size(ref_mat);
+            else
+                ref_size = reference;
             end
-            if ~all(sz == S)
-                error('spref:WrongSize','Value to be asigned is the wrong size [%i, %i] not [%i, %i]',sz(1), sz(2), S(1), S(2))
+            val_size = size(value);
+            if isnan(ref_size(2))
+               ref_size(2) = val_size(end); 
+            end
+            if ~all(ref_size == val_size)
+                error('readparam:WrongSize','Value to be asigned is the wrong size [%i, %i] not [%i, %i]',sz(1), sz(2), S(1), S(2))
             else
                 out = 1;
             end
