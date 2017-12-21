@@ -1,61 +1,45 @@
 classdef readparam < dynamicprops
-    % class to store and retrieve persistent settings
-    %
-    % ### Syntax
-    %
-    % `pref = swpref`
-    %
-    % `pref = swpref('default')`
-    %
-    % ### Description
-    %
-    % `pref = swpref` retrieves and creates a preference object.
-    %
-    % `pref = swpref('default')` resets all preferences to default values.
-    %
-    % The settings sotred in the `swpref` class for spinw objects will
-    % persist during a single Matlab session. It is different from the
-    % Matlab built-in preferences, as swpref resets all settings to factory
-    % default after every restart of Matlab.
-    %
-    % ### Examples
-    %
-    % We change the fontsize value and show that it is retained even when a
-    % new instance of the object is created:
-    %
-    % ```
-    % >>pref = swpref
-    % >>pref.fontsize>>
-    % >>pref.fontsize = 18
-    % >>pref2 = swpref
-    % >>pref.fontsize>>
-    % >>pref2.fontsize>>
-    % ```
-    %
-    % ### Properties
-    %
-    % Properties can be changed by directly assigning a new value to them.
-    % Once a new value to a given property is assigned, it will be retained
-    % until the end of a MATLAB session, even if a new class instance is
-    % created.
-    %
-    % ### Methods
-    %
-    % Methods are the different commands that require an `swpref` object as
-    % a first input, thus they can be called as `method1(obj,...)`,
-    % alternatively the equivalent command is `obj.method1(...)`.
-    %
-    % swpref.get
-    % swpref.set
-    % swpref.export
-    % swpref.import
-    %
-    % Commands are methods which can be called without first creating a
-    % preference object `swpref.command(....)`.
-    %
-    % swpref.getpref
-    % swpref.setpref
-    %
+% parse input arguments
+%
+% ### Syntax
+%
+% `parser = readparam(format)`
+%
+% `parser.parse(Name,Value,....)`
+% `parser.parse(Structure)`
+%
+% ### Description
+%
+% `parser = readparam(format)` create a parser object which can then parse
+% Name, Value pairs to the specification given by `format`. 
+% The parsing is controlled by the given `format` input. 
+% 
+% `[valid_parameters, invalid_parameters] = parser(Name,Value,....)` The 
+% name-value pairs are converted into the parsed struct `valid_parameters` 
+% which has field names identical to the given parameter names and corresponding
+% values taken from the input. `format` can also define required dimensionality of
+% a given value and default values for select parameters. 
+%
+%
+% ### Input Arguments
+%
+% `format`
+% : A struct with the following fields:
+%   * `fname` Field names, $n_{param}$ strings in cell.
+%   * `size` Required dimensions of the corresponding value in a cell of
+%     $n_{param}$ vectors. Negative integer means dimension has to match with
+%     any other dimension which has the identical negative integer.
+%   * `defval` Cell of $n_{param}$ values, provides default values for
+%     missing parameters.
+%   * `soft` Cell of $n_{param}$ logical values, optional. If `soft(i)` is
+%     true, in case of missing parameter value $i$, no warning will be
+%     given.
+%   * `validation` Cell of $n_{param}$ function handles, optional. the
+%   function handles can be in the form @(obj,)
+%   * `needed` Cell of $n_{param}$ logical values, optional. If `needed(i)` is
+%     true, then on first parse an error will occour if the default value
+%     is left.
+%
     
     properties(Hidden = true, Access=private)
         % stores the details to create and check dynamic properties.
@@ -69,8 +53,15 @@ classdef readparam < dynamicprops
         %
         % `Label` a cell array giving a short description on the dynamic
         % property.
+        % 
+        % `Soft` a cell array saying if this can be set empty
         %
-        % These details are retrieved from the user.
+        % `Needed` a cell array saying if the property is required to be set 
+        % on first parse 
+        %
+        % `ValidateStore` a structure containing internal information.
+        %
+        % `Datastore` a structure containing all the data. 
         %
         Name
         Validation
@@ -89,27 +80,20 @@ classdef readparam < dynamicprops
     
     methods
         function obj = readparam(varargin)
-            % Spin preference constructor.
+            % Parameter parser constructor.
             %
             % ### Syntax
             %
-            % `pref = swpref`
-            %
-            % `pref = swpref('default')`
+            % `parser = readparam(format)`
             %
             %
             % ### Description
             %
-            % `pref = swpref` retrieves and creates a preference object.
-            %
-            % `pref = swpref('default')` resets all preferences to default values.
+            % `parser = readparam(format)` 
             %
             %
-            % {{note The preferences are reset after every restart of Matlab, unlike the
-            % Matlab built-in preferences that are persistent between Matlab sessions.
-            % If you want certain preferences to keep after closing matlab, use the
-            % 'pref.export(fileLocation)' and 'pref.import(fileLocation)' functions.
-            % These can be added to your startup file.}}
+            % {{note See the class description for the format of `format` 
+            % and the valid fields which it can hold.}}
             %
             % ### See Also
             %
@@ -166,16 +150,14 @@ classdef readparam < dynamicprops
                             % One vairable depends on another one..
                             for j = 1:length(unique_match)
                                 this_ind = cellfun(@(x) x(2) == unique_match(j), supplied_opt_v{i});
-                                % Now we have to build up the
-                                % dependencies..
+                                % Now we have to build up the dependencies..
                                 this_validation(ind & this_ind) =...
                                     cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%i, %i],x)',x(1),...
                                     length(supplied_opt_v{strcmp('defval',supplied_opt_p)}{find(ind & this_ind,1,'first')})),...
                                     supplied_opt_v{i}(ind & this_ind),'UniformOutput',false);
                             end
                         end
-                        % Set up the validation functions. Append if need
-                        % be.
+                        % Set up the validation functions. Append if need be.
                         if isempty(Name_value.validation)
                             Name_value.validation = this_validation;
                         else
@@ -277,7 +259,26 @@ classdef readparam < dynamicprops
         end
         
         function varargout =  validate(obj,varargin)
-            
+            % Validates a Name/Value pairing or struct
+            %
+            % ### Syntax
+            %
+            % `[valid_parameters, invalid_parameters] = parser.validate(Name,Value,....)`
+            % 
+            % `[valid_parameters, invalid_parameters] = parser.validate(Structure)`
+            %
+            % ### Description
+            %
+            % `[valid_parameters, invalid_parameters] =
+            % parser.validate(Name,Value,....)` uses the template supplied in the
+            % creation of the parser to retun a stucture of valid and invalid
+            % parsed options as a struct
+            %
+            % `[valid_parameters, invalid_parameters] =
+            % parser.validate(struct)` uses the template supplied in the
+            % creation of the parser to retun a stucture of valid and invalid
+            % parsed options             %
+            %
             
             % Check parameter/value pair and convert a structure
             if (length(varargin) > 1) && mod(nargin-1,2)
@@ -318,6 +319,25 @@ classdef readparam < dynamicprops
         end
         
         function varargout = parse(obj,varargin)
+            % Parses a Name/Value pairing or struct
+            %
+            % ### Syntax
+            %
+            % `parser.parse(Name,Value,....)`
+            %
+            % `invalid_parameters = parser.parse(Name,Value,....);`
+            % 
+            % `parser.parse(struct)`
+            % 
+            % `invalid_parameters = parser.parse(struct);`
+            %
+            % ### Description
+            %
+            % `invalid_parameters = parser.validate(Name,Value,....)` uses 
+            % the template supplied in the creation of the parser to parse 
+            % and set values. Invalid parsed options can be returned as a struct
+            %
+            %
             
             % Check to see if everything is OK
             [valid_options, invalid_options] = obj.validate(varargin{:});
