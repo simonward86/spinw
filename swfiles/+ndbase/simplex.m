@@ -150,7 +150,9 @@ inpForm.defval = {'off'     1e-3     1e-3   100*Np    []        []      };
 inpForm.size   = {[1 -1]    [1 1]    [1 1]  [1 1]     [-5 -2]   [-3 -4] };
 inpForm.soft   = {false     false    false  false     true      true    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 param.Np = Np;
 
 % limits

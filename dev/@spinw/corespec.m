@@ -111,7 +111,9 @@ inpForm.fname  = {'fitmode' 'sortMode' 'optmem' 'tol'  'omega_tol' 'hermit' };
 inpForm.defval = {false     true       0        1e-4  1e-5        true     };
 inpForm.size   = {[1 1]     [1 1]      [1 1]    [1 1] [1 1]       [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+% param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if param.fitmode
     param.sortMode = false;

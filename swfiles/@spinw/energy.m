@@ -69,7 +69,8 @@ inpForm.fname  = {'epsilon'};
 inpForm.defval = {1e-5     };
 inpForm.size   = {[1 1]    };
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 [SS, SI] = obj.intmatrix;
 

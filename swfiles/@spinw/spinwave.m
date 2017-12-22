@@ -260,7 +260,8 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = readparam(inpForm);
+        param0.parse(varargin{:})
         
         if ~param0.fitmode
             warning('spinw:spinwave:MissingInput','No hkl value was given, spin wave spectrum for general Q (h,k,l) will be calculated!');
@@ -297,7 +298,8 @@ inpForm.fname  = [inpForm.fname  {'cmplxBase' 'tid' 'fid' }];
 inpForm.defval = [inpForm.defval {false       -1    -1    }];
 inpForm.size   = [inpForm.size   {[1 1]       [1 1] [1 1] }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~param.fitmode
     % save the time of the beginning of the calculation

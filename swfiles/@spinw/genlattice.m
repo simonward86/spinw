@@ -116,7 +116,8 @@ inpForm.defval = [inpForm.defval {[0 0 0]  []    []         obj.lattice.origin '
 inpForm.size   = [inpForm.size   {[1 3]    [3 3] [-4 -5 -6] [1 3]              [1 3]  [1 1]            }];
 inpForm.soft   = [inpForm.soft   {false    true  true       false              true   true             }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % new option, but keep the old one as well
 if ~isempty(param.spgr)

@@ -96,7 +96,9 @@ inpForm.defval = [inpForm.defval {1       func0  false     -1   }];
 inpForm.size   = [inpForm.size   {[-3 -4] [1 1]  [1 1]     [1 1]}];
 inpForm.soft   = [inpForm.soft   {false   false  false     false}];
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if param.tid == -1

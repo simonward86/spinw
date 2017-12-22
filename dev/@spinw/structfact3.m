@@ -76,11 +76,12 @@ function sFact = structfact3(obj, hkl, varargin)
 %
 
 
-inpF.fname  = {'gtensor' 'tol' 'formfact' 'formfactfun'};
-inpF.defval = {false     1e-4  false       @sw_mff     };
-inpF.size   = {[1 1]     [1 1] [1 -1]      [1 1]       };
+inpForm.fname  = {'gtensor' 'tol' 'formfact' 'formfactfun'};
+inpForm.defval = {false     1e-4  false       @sw_mff     };
+inpForm.size   = {[1 1]     [1 1] [1 -1]      [1 1]       };
 
-param = sw_readparam(inpF, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 sGrid = size(hkl);
 

@@ -77,7 +77,8 @@ inpForm.defval = {[]         []         {}      []      };
 inpForm.size   = {[-1 -2 -3] [-4 -5 -6] [-7 -8] [-9 -10] };
 inpForm.soft   = {true       true       true    true    };
 
-newMat = sw_readparam(inpForm, varargin{:});
+newMat = readparam(inpForm);
+newMat.parse(varargin{:})
 
 if ~isnumeric(newMat.value) && ~isa(newMat.value,'sym')
     warning('spinw:addmatrix:WrongInput','Matrix value has to be numeric or symbolic variable!')

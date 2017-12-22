@@ -83,7 +83,8 @@ inpForm.fname  = {'fitmode' 'plotmode' 'zeroC' 'extend' 'conjugate' 'rotMat' 'so
 inpForm.defval = {0          false     false   true     false       true     false   };
 inpForm.size   = {[1 1]      [1 1]     [1 1]   [1 1]    [1 1]       [1 1]    [1 1]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % create parameters of magnetic atoms in the unit cell
 mAtom    = obj.matom;

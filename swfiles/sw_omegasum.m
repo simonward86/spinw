@@ -45,7 +45,8 @@ inpForm.fname  = {'tol' 'zeroint' 'emptyval'};
 inpForm.defval = {1e-5  0         NaN       };
 inpForm.size   = {[1 1] [1 1]     [1 1]     };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 tol = param.tol;
 omega    = real(spectra.omega);

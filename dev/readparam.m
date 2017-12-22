@@ -142,15 +142,23 @@ classdef readparam < dynamicprops
                         ind = cellfun(@(x) x(2) < 0, supplied_opt_v{i});
                         unique_match = unique(cellfun(@(x) x(2),supplied_opt_v{i}(ind)));
                         if length(unique_match) == length(supplied_opt_v{i}(ind))
-                            % The length is not fixed, replace by NaN
-                            this_validation(ind) = ...
-                                cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%i, NaN],x)', ...
-                                x(1)),supplied_opt_v{i}(ind),'UniformOutput',false);
+                            % The length is not fixed, replace by NaN.
+                            % This is not as simple as I wanted.....
+                            for j = 1:length(ind)
+                                if ~ind(j)
+                                    continue
+                                end
+                                this_opt = supplied_opt_v{i}{j};
+                                this_opt(this_opt < 0) = NaN;
+                                this_validation{j} = sprintf('@(obj,x) check_size(obj,[%s],x)',sprintf('%i ',this_opt));
+                            end
                         else
                             % One vairable depends on another one..
                             for j = 1:length(unique_match)
                                 this_ind = cellfun(@(x) x(2) == unique_match(j), supplied_opt_v{i});
                                 % Now we have to build up the dependencies..
+                                % TODO THIS WILL NOT WORK FOR N DIMENSIONAL
+                                % RELATIONS. SEE CODE ABOVE FOR CHANGES...
                                 this_validation(ind & this_ind) =...
                                     cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%i, %i],x)',x(1),...
                                     length(supplied_opt_v{strcmp('defval',supplied_opt_p)}{find(ind & this_ind,1,'first')})),...
@@ -369,6 +377,33 @@ classdef readparam < dynamicprops
     end
     
     methods (Hidden=true, Access = public)
+        
+        function obj = subsasgn(obj,S,B)
+            % Deal with the case where we add another field at random...
+            switch S.type
+                case '.'
+                    if ~obj.check_names(S.subs)
+                        warning('readparam:FieldCreation','The field %s is being created',S.subs)
+                        obj.Name{end+1} = S.subs;
+                        obj.Value{end+1} = B;
+                        obj.Validation{end+1} = '';
+                        obj.Label{end+1} = '';
+                        obj.Soft(end+1) = false;
+                        obj.Needed(end+1) = false;
+                        obj.props(end+1) = addprop(obj,obj.Name{end});
+                        obj.props(end).SetMethod = @(obj, val) set_data(obj,obj.Name{end}, val);
+                        obj.props(end).GetMethod = @(obj) get_data(obj,obj.Name{end});
+                        obj.(obj.Name{end}) = obj.Value{end};
+                    else
+                       obj.(S.subs) = B; 
+                    end
+                otherwise
+                    e = MException('readparam:IndexingNotSupported','The indexing %s is not supported',S.type);
+                    e.throwAsCaller;
+            end
+        end
+        
+        
         function out = check_size(obj,reference,value)
             % checks to see if an object is the wrong size.
             %
@@ -406,17 +441,28 @@ classdef readparam < dynamicprops
             % The current size
             val_size = size(value);
             % Replace a NaN with the current size (unbounded.)
-            if isnan(ref_size(2))
-                ref_size(2) = val_size(end);
+            if any(isnan(ref_size))
+                % Now we have to cope with shitty legacy stuff...
+                if length(ref_size) == length(val_size)
+                    ind = isnan(ref_size);
+                    ref_size(ind) = val_size(ind);
+                else
+                    ref_size = val_size; % Naughty Sandor....
+                end
+
             end
-            % Support putting in placeholders. Not a fan of this logic....
-            if isempty(value) && all(ref_size == [1 0] | ref_size == [1 1])
-                ref_size = [0 0];
+            % Support putting in placeholders. I'm not a fan of this logic.
+            % We should have caught the error in the parsing stage, so it
+            % doesn't matter. Possibly...
+            if isempty(value) 
+                ref_size = [0, 0];
             end
             % Do the check
             if ~all(ref_size == val_size)
-                e = MException('readparam:WrongSize','Value to be asigned is the wrong size [%i, %i] not [%i, %i]',...
-                    val_size(1), val_size(2), ref_size(1), ref_size(2));
+                text1 = sprintf('%i ',val_size); text1 = text1(1:end-1);
+                text2 = sprintf('%i ',ref_size); text2 = text2(1:end-1);
+                e = MException('readparam:WrongSize','Value to be asigned is the wrong size [%s] not [%s]',...
+                    text1, text2);
                 e.throwAsCaller;
             else
                 out = 1;
@@ -469,6 +515,12 @@ classdef readparam < dynamicprops
             % Is it not in a cell
             if ~iscell(val)
                 val = {val};
+            end
+            % Is it empty?
+            if isempty(val)
+                % We can't do a validation on nothing....
+                varargout{1} = ones(size(validation));
+                return
             end
             % Are the cells nested
             if any(cellfun(@iscell,validation))

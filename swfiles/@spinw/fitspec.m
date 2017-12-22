@@ -183,7 +183,8 @@ inpForm.defval = [inpForm.defval {20        1     0        tid0   true    }];
 inpForm.size   = [inpForm.size   {[1 1]  	[1 1] [1 1]    [1 1]  [1 1]   }];
 inpForm.soft   = [inpForm.soft   {false  	false false    false  false   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % number of parameters (length of x)
 nPar = max(max(length(param.xmin),length(param.xmax)),length(param.x0));

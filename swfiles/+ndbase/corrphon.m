@@ -16,7 +16,8 @@ inpForm.fname  = {'qphon'};
 inpForm.defval = {[4 5]  };
 inpForm.size   = {[1 2]  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~isa(d2ddat,'d2d')
 	error('corrphon:WrongInput','The given data is not d2d type!')

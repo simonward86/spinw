@@ -50,7 +50,8 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = readparam(inpForm);
+        param0.parse(varargin{:})
         
         if ~param0.fitmode
             fprintf0(obj.fileid,['No symbolic hkl value was given, Fourier'...
@@ -74,8 +75,8 @@ inpForm.fname  = {'fitmode'};
 inpForm.defval = {false    };
 inpForm.size   = {[1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
-
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % Create the interaction matrix and atomic positions in the extended
 % magnetic unit cell.

@@ -33,7 +33,8 @@ inpForm.fname  = {'mode'  };
 inpForm.defval = {'AmeVTK'};
 inpForm.size   = {[1 -1]  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 switch param.mode
     case 'AmeVTK'

@@ -144,7 +144,8 @@ optName = optName(~selNoG);
 optVal  = optVal(~selNoG);
 
 optNo = [optNameNoG;optValNoG];
-param = sw_readparam(inpForm, optNo{:});
+param = readparam(inpForm);
+param.parse(optNo{:})
 
 if isempty(param.figure)
     hFigure = swplot.activefigure('plot');
@@ -176,7 +177,8 @@ warn0 = warning('query');
 warning('off','sw_readparam:UnreadInput')
 warning('off','plotbond:EmptyPlot')
 
-paramG = sw_readparam(inpForm, varargG{:});
+paramG = readparam(inpForm);
+paramG.parse(varargG{:})
 
 % sort options according to plot name
 plotName = {'atom' 'mag' 'bond' 'ion' 'cell' 'base' 'chem'};

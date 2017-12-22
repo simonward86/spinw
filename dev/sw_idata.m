@@ -33,7 +33,8 @@ inpForm.fname  = {'fwhmE' 'fwhmQ' 'nInterp'};
 inpForm.defval = {0.1     0.01    1        };
 inpForm.size   = {[1 1]   [1 1]   [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 
 iDataInstalled = exist('iData') && isa(iData,'iData'); %#ok<EXIST>

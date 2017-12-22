@@ -82,7 +82,8 @@ inpForm.defval = {[]      []     []         false};
 inpForm.size   = {[1 -1]  [1 -1] []         [1 1]};
 inpForm.soft   = {false   true   true       false};
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % number of parameters
 nPar = numel(param.param);

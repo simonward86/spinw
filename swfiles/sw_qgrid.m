@@ -84,7 +84,9 @@ inpForm.defval = [inpForm.defval { []     []     []    [1 1 1] []     {}     -1 
 inpForm.size   = [inpForm.size   {[1 -3] [1 -4] [1 -5] [1 -6]  [-7 3] [1 -8] [1 1]}];
 inpForm.soft   = [inpForm.soft   {true   true   true   false   true   true   false}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if nargin == 0

@@ -171,7 +171,8 @@ inpForm.defval = [inpForm.defval {{}        false     0.5         fontSize0  tru
 inpForm.size   = [inpForm.size   {[-14 -15] [1 1]     [1 -16]     [1 1]      [1 1]       [1 1]  [1 -17]}];
 inpForm.soft   = [inpForm.soft   {true      false     false       false      false       false  false  }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 type = lower(param.type);
 

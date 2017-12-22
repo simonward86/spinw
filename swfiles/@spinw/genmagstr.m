@@ -218,7 +218,8 @@ inpForm.defval = [inpForm.defval {[]         0     0      1e-5      'xyz'}];
 inpForm.size   = [inpForm.size   {[3 -7 -6] [1 1] [1 1]  [1 1]     [1 -5]}];
 inpForm.soft   = [inpForm.soft   {true      true  false  false     false }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if isempty(param.k)
     noK = true;

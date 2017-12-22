@@ -133,7 +133,9 @@ inpForm.size   = [inpForm.size   {[1 3]  [1 1]    [1 1]  [1 -2]  [1 1]     [1 1]
 inpForm.soft   = [inpForm.soft   {0      0        0      0        0        false  false}];
 
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if prod(param.nExt) == 0

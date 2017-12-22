@@ -49,7 +49,8 @@ inpForm.fname  = {'E'   'lambda' 'ki'  'sense'};
 inpForm.defval = {0     0        0     1      };
 inpForm.size   = {[1 1] [1 1]    [1 1] [1 1]  };
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if param.lambda == 0
     % Angstrom

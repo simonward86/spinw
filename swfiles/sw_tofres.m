@@ -83,7 +83,9 @@ inpForm.fname  = {'method'  'dQ'  'nQ' 'fid' 'tid'};
 inpForm.defval = {'grid'    dQ0    nQ0 -1    -1   };
 inpForm.size   = {[1 -1] [1 -2] [1 -3] [1 1] [1 1]};
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 obj   = spec.obj;
 

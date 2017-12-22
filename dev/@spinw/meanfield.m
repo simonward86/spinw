@@ -78,7 +78,8 @@ inpForm.defval = {0      false       @sw_mff      false     false     []    []  
 inpForm.size   = {[1 1]  [1 -1]      [1 1]        [1 1]     [1 1]     [1 1] [1 1]};
 inpForm.soft   = {false  false       false        false     false     true  true };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 fid = obj.fileid;
 

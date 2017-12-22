@@ -138,7 +138,8 @@ inpForm.fname  = [inpForm.fname  {'eps2' 'eps3' 'lambda0' 'lUp' 'lDown' 'update'
 inpForm.defval = [inpForm.defval {1e-2    0.1    1e-2      30    7       'nielsen' true       true(1,Np) 10   }];
 inpForm.size   = [inpForm.size   {[1 1]  [1 1]  [1 1]     [1 1] [1 1]   [1 -2]    [1 1]      [1 Np]      [1 1]}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 switch param.update
     case 'lm'

@@ -138,7 +138,8 @@ inpForm.defval = [inpForm.defval {nPatch0  nMesh0  'lu'   [0;0;0] false }];
 inpForm.size   = [inpForm.size   {[1 1]    [1 1]   [1 -6] [3 1]   [1 1] }];
 inpForm.soft   = [inpForm.soft   {false    false   false  false   false }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if strcmp(param.color,'auto')
     param.color = [0 0 0];

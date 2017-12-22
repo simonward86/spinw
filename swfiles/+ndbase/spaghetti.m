@@ -47,7 +47,8 @@ inpForm.defval = {[]     []      true     'auto' true   false 1        };
 inpForm.size   = {[1 -1] [1 -2]  [1 1]    [1 -3] [1 1]  [1 1] [1 1]    };
 inpForm.soft   = {true   true    false    false  false  false false    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % number of data pieces to plot
 nDat = numel(dat);

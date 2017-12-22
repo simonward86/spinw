@@ -129,7 +129,9 @@ inpForm.fname  = {'tol' 'hkl'  'eig' 'vect' 'norm' 'title' 'fid'};
 inpForm.defval = {1e-4   hkl0   true false  false   title0 -1   };
 inpForm.size   = {[1 1] [3 1]  [1 1] [1 1]  [1 1]  [1 -1]  [1 1]};
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if param.norm

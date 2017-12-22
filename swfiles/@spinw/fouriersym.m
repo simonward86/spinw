@@ -39,7 +39,8 @@ inpForm.fname  = {'tol' 'hkl'  'title'};
 inpForm.defval = {1e-4   hkl0  title0 };
 inpForm.size   = {[1 1] [3 1]  [1 -1] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % symbolic hkl 
 hkl = param.hkl;

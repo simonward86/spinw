@@ -50,7 +50,8 @@ inpForm.defval = [inpForm.defval {false       @sw_mff      false     ~isempty(hk
 inpForm.size   = [inpForm.size   {[1 -1]      [1 1]        [1 1]     [1 1]         [1 1]}];
 inpForm.soft   = [inpForm.soft   {false       false        false  	 false         false }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if param.T == 0
     error('spinw:scga:WrongInput','Invalid temperature, the SCGA solver needs non-zero temperature!')

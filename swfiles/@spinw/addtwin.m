@@ -73,7 +73,8 @@ inpForm.fname  = {'axis'  'phi'  'rotC'   'vol'  'phid' 'overwrite'};
 inpForm.defval = {[0 0 0] 0      zeros(3) 1      0      false      };
 inpForm.size   = {[1 3]   [1 -1] [3 3 -2] [1 -3] [1 -4] [1 1]      };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if numel(param.phid)>1 || param.phid~=0
     param.phi = param.phid *pi/180;

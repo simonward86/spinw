@@ -35,7 +35,8 @@ inpForm.defval = {0      true   1e3    []       []      };
 inpForm.size   = {[1 -1] [1 1]  [1 1]  [1 1]    [1 -2]  };
 inpForm.soft   = {false  false  false  true     true    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if numel(param.T)>1
     param.plot = false;

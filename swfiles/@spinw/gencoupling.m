@@ -90,7 +90,9 @@ inpForm.size   = {[1 1]        [1 1]         [1 1] [1 1]     [1 1]  [1 1]   [1 1
 inpForm.soft   = {false        false          false false    false  true    false };
 
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 tol   = param.tol;

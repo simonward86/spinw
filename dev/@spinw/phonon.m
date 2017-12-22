@@ -47,7 +47,8 @@ if obj.symbolic
         inpForm.fname  = {'fitmode'};
         inpForm.defval = {false    };
         inpForm.size   = {[1 1]    };
-        param0 = sw_readparam(inpForm, varargin{:});
+        param0 = readparam(inpForm);
+        param0.parse(varargin{:})
         
         if ~param0.fitmode
             fprintf0(obj.fileid,'No hkl value was given, phonon spectrum for general Q (h,k,l) will be calculated!\n');
@@ -62,8 +63,8 @@ end
 inpForm.fname  = {'omega_tol'};
 inpForm.defval = {1e-5       };
 inpForm.size   = {[1 1]      };
-param = sw_readparam(inpForm, varargin{:});
-
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 SS = obj.intmatrix('fitmode',2,'conjugate',true);
 

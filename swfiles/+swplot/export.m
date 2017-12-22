@@ -46,7 +46,8 @@ inpForm.defval = {[]       300   ''        };
 inpForm.size   = {[1 1]    [1 1] [1 -1]    };
 inpForm.soft   = {true     false true      };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if isempty(param.figure)
     hFigure  = swplot.activefigure('plot');

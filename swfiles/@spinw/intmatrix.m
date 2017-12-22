@@ -118,7 +118,8 @@ inpForm.fname  = {'fitmode' 'plotmode' 'zeroC' 'extend' 'conjugate' 'sortDM' 'nE
 inpForm.defval = {false     false      false   true     false       false    nExt0 };
 inpForm.size   = {[1 1]     [1 1]      [1 1]   [1 1]    [1 1]       [1 1]    [1 3] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 nExt = param.nExt;
 

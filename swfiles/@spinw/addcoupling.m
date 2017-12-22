@@ -91,7 +91,8 @@ inpForm.defval = {[]     []     []      []      []     []    };
 inpForm.size   = {[1 -1] [1 -2] [-3 -4] [1 -5]  [1 -6] [1 -7]};
 inpForm.soft   = {false  false  true    true    true   true  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~isnumeric(param.mat)
     param.mat = find(ismember(obj.matrix.label,param.mat));

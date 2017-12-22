@@ -36,11 +36,12 @@ function sFact = structfact2(obj, varargin)
 % See also SW_PLOTSF, SW_INTSF, SPINW.ANNEAL, SPINW.GENMAGSTR.
 %
 
-inpF.fname  = {'fExt'  'S'           };
-inpF.defval = {[1 1 1] obj.mag_str.S };
-inpF.size   = {[1 3]   [3 -1]        };
+inpForm.fname  = {'fExt'  'S'           };
+inpForm.defval = {[1 1 1] obj.mag_str.S };
+inpForm.size   = {[1 3]   [3 -1]        };
 
-param    = sw_readparam(inpF, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 fExt     = param.fExt;
 matom    = obj.matom;

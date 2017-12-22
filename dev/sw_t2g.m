@@ -39,7 +39,8 @@ inpForm.fname  = {'r0'    'v1'    'v2'    'scale' 'plotv'};
 inpForm.defval = {[0 0 0] [1 0 0] [0 1 0] 1       false  };
 inpForm.size   = {[1 3]   [1 3]   [1 3]   [1 1]   [1 1]  };
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 v1 = param.v1;
 v2 = param.v2;

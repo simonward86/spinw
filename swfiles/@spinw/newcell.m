@@ -107,7 +107,8 @@ inpForm.fname  = {'bvect' 'bshift' 'keepq'};
 inpForm.defval = {eye(3)  [0 0 0]  false  };
 inpForm.size   = {[-1 3]  [1 3]    [1 1]  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~iscell(param.bvect) && size(param.bvect,1)~=3
     error('spinw:newcell:WrongInput','Input has to be 1x3 cell or 3x3 matrix!');

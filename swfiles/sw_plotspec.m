@@ -198,7 +198,9 @@ inpForm.fname  = [inpForm.fname  {'log' 'plotf'  'maxPatch' 'x0'  'qlabel' }];
 inpForm.defval = [inpForm.defval {false @sw_surf 1000       [0 1] cell(1,0)}];
 inpForm.size   = [inpForm.size   {[1 1] [1 1]    [1 1]      [1 2] [1 -7]   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 % plotmode string

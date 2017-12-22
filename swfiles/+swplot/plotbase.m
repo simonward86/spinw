@@ -118,7 +118,8 @@ inpForm.defval = [inpForm.defval {false  true      nMesh0  nPatch0  'lu'   2    
 inpForm.size   = [inpForm.size   {[1 1]  [1 1]     [1 1]   [1 1]    [1 -6] [1 1]    [1 1]   }];
 inpForm.soft   = [inpForm.soft   {false  false     false   false    false  false    false   }];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if isempty(param.figure)
     hFigure  = swplot.activefigure('plot');

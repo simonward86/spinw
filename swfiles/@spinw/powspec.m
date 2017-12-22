@@ -217,7 +217,8 @@ inpForm.fname  = [inpForm.fname  {'fid'}];
 inpForm.defval = [inpForm.defval {-1   }];
 inpForm.size   = [inpForm.size   {[1 1]}];
 
-param  = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if param.fid == -1
     fid = pref.fid;

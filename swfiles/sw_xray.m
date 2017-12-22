@@ -71,7 +71,8 @@ inpForm.fname  = {'formfact' 'formfactfun' 'fid'};
 inpForm.defval = {true        @sw_cff      -1   };
 inpForm.size   = {[1 -1]      [1 1]        [1 1]};
 
-param = sw_readparam(inpForm,varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % loop over the twins
 if ~iscell(spectra.Sab)

@@ -58,7 +58,8 @@ inpForm.fname  = {'nExt' 'exact' 'origin'};
 inpForm.defval = {nExt0  true    [0 0 0] };
 inpForm.size   = {[1 3]  [1 1]   [1 3]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if any(param.origin-round(param.origin))
     error('swplot:magstr:WrongInput','Shifting the origin is only allowed by multiples of lattice vectors!')

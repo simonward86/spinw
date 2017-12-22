@@ -173,7 +173,8 @@ inpForm.defval = [inpForm.defval {0.5      0.07   false      false        false}
 inpForm.size   = [inpForm.size   {[1 1]   [1 1]   [1 1]      [1 1]        [1 1]}];
 inpForm.soft   = [inpForm.soft   {false   false   false      false        false}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % find swplot figure
 if isempty(param.figure)

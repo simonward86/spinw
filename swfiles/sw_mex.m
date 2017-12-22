@@ -32,7 +32,8 @@ inpForm.fname  = {'test' 'compile' 'swtest' };
 inpForm.defval = {false  true      false    };
 inpForm.size   = {[1 1]  [1 1]     [1 1]    };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if param.compile
     % save current folder

@@ -28,7 +28,9 @@ inpForm.fname  = {'fid' 'tol' };
 inpForm.defval = {-1    1e-5  };
 inpForm.size   = {[1 1] [1 1] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if param.fid == -1

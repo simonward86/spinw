@@ -41,7 +41,8 @@ inpForm.fname  = {'iMagnon' 'Q'   };
 inpForm.defval = {1         1     };
 inpForm.size   = {[1 1]    [-1 1] };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~isfield(spectra,'V')
     error('sw_spinmotion:MissingField',['Input spectra has to be calculated '...

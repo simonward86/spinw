@@ -34,7 +34,8 @@ inpForm.defval = {[]     'auto'  200    true   true      true       false};
 inpForm.size   = {[1 -2] [1 -3]  [1 -4] [1 1]  [1 1]     [1 1]      [1 1]};
 inpForm.soft   = {true   false   false  false  false     false      false};
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if isa(dat,'spec1d')
     % read spec1d data + x values

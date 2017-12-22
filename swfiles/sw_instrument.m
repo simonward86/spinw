@@ -135,7 +135,9 @@ inpForm.defval = [inpForm.defval { 'auto'    0     false   true    func0  -1   }
 inpForm.size   = [inpForm.size   { [1 -2]    [1 1] [1 1]   [1 1]   [1 1]  [1 1]}];
 inpForm.soft   = [inpForm.soft   {false      false false   false   false  false}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
+
 pref = swpref;
 
 % Print output

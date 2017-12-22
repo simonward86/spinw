@@ -38,7 +38,8 @@ inpForm.fname  = {'bintype' 'axunit'  'emptyval'};
 inpForm.defval = {'center'  'default' nan       };
 inpForm.size   = {[1 -1]    [1 -2]    [1 1]     };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 switch param.bintype
     case {'center' 'centre'}

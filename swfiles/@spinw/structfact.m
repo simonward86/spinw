@@ -143,7 +143,9 @@ inpF.defval = [inpF.defval {[]       'struct' []     false    1e-10   -1   }];
 inpF.size   = [inpF.size   {[1 1]    [1 -2]   [1 1]  [1 1]    [1 1]   [1 1]}];
 inpF.soft   = [inpF.soft   {true     false    true   false    false   false}];
   
-param = sw_readparam(inpF, varargin{:});
+param = readparam(inpF);
+param.parse(varargin{:})
+
 pref = swpref;
 
 if param.fid == -1

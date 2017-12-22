@@ -133,7 +133,8 @@ inpForm.fname  = [inpForm.fname  {'TolFun' 'eps3' 'lambda0' 'vary'      'nu0'}];
 inpForm.defval = [inpForm.defval {1e-6     0.1    1e-2      true(1,Np)  10   }];
 inpForm.size   = [inpForm.size   {[1 1]    [1 1]  [1 1]     [1 Np]      [1 1]}];
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 % check input function
 if ischar(func0)

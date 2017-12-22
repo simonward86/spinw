@@ -85,7 +85,8 @@ inpForm.fname  = {'axis'  'angle' 'rotC'   'vol'  'angled'};
 inpForm.defval = {[0 0 0] 0       zeros(3) 1      0       };
 inpForm.size   = {[1 3]   [1 -1]  [3 3 -2] [1 -3] [1 -4]  };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if numel(param.angled)>1 || param.angled~=0
     param.angle = param.angled *pi/180;

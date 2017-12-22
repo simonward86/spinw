@@ -127,7 +127,8 @@ inpForm.defval = [inpForm.defval {[]     []          []          []     []      
 inpForm.size   = [inpForm.size   {[1 -7] [-8 -9]     [-8 -9]     [1 -7] [-8 -9]    [1 -7] [1 -7]}];
 inpForm.soft   = [inpForm.soft   {true    true       true         true  true       true   true  }];
 
-newAtom = sw_readparam(inpForm, varargin{:});
+newAtom = readparam(inpForm);
+newAtom.parse(varargin{:})
 
 if isempty(newAtom.formfactn)
     newAtom.formfactn = newAtom.formfact;

@@ -128,7 +128,8 @@ inpForm.size   = {[1 -1]      [1 1]  [1 1] [1 1]          [1 -2]  [1 1]  [1 1]};
 inpForm.soft   = {false       false  false false          true    true   false};
 
 warnState = warning('off','sw_readparam:UnreadInput');
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 pref = swpref;
 
 if ~isempty(param.param)

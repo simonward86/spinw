@@ -8,7 +8,8 @@ inpForm.fname  = {'sourcepath' 'outpath' 'sidebar'    'fun'      'verstr' 'recal
 inpForm.defval = {{}           ''        'sw_sidebar' zeros(1,0) struct() true     zeros(1,0) ''        false   };
 inpForm.size   = {[1 -1]       [1 -5]    [1 -2]       [1 -3]     [1 1]    [1 1]    [1 -4]     [1 -6]    [1 1]   };
 
-param = sw_readparam(inpForm, varargin{:});
+param = readparam(inpForm);
+param.parse(varargin{:})
 
 if ~iscell(param.sourcepath)
     path0 = {param.sourcepath};
