@@ -136,11 +136,43 @@ classdef readparam < dynamicprops
                         error('readparam:InvalidOptions','%s is not a parameter/value pairs must be give.', supplied_opt_p{i})
                     elseif strcmp(supplied_opt_p{i},'size')
                         % Create placeholder validation functions...
-                        this_validation = ...
-                            cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%i, %i],x)', x(1), x(2)),...
-                            supplied_opt_v{i},'UniformOutput',false);
-                        ind = cellfun(@(x) x(2) < 0, supplied_opt_v{i});
-                        unique_match = unique(cellfun(@(x) x(2),supplied_opt_v{i}(ind)));
+                        this_validation = cellfun(@(x) sprintf('@(obj,x) check_size(obj,[%s],x)',x(1:end-1)),...
+                            cellfun(@(x) sprintf('%i ',x),supplied_opt_v{i},'UniformOutput',false),'UniformOutput',false);
+                        ind_negative = cellfun(@(x) x < 0,supplied_opt_v{i},'UniformOutput',false);
+                        many_opts = cellfun(@sum,ind_negative);
+                        uni = unique(cell2mat(supplied_opt_v{i}));
+                        uni(uni > 0) = [];
+                        confusion_matrix = cell2mat(arrayfun(@(y) cellfun(@(x) any(x==y), supplied_opt_v{i}),uni(:),'UniformOutput',0));
+                        for j = unique(many_opts)
+                            this_matrix = confusion_matrix(:,sum(confusion_matrix,1)==j);
+                        end
+                        all_negative = cell2mat(cellfun(@(x,y) x(y),...
+                            supplied_opt_v{i},ind_negative,'UniformOutput',false));
+                        unique_negative = unique(all_negative);
+                        for j = 1:length(unique_negative)
+                            inds = cellfun(@(x, y) any(x(y)==unique_negative(j)),supplied_opt_v{i},ind_negative);
+                            sum_inds = sum(inds);
+                            if sum_inds > 0
+                                if sum_inds < 2
+                                    % In this case we have 1 unknown negative value, which we replace with NaN
+                                    if sum(ind_negative{inds}) == 1
+                                        % This is the case where there is
+                                        % only one negative in the size.
+                                        % i.e. [1 -1]
+                                        supplied_opt_v{i}{inds}(supplied_opt_v{i}{inds} < 0) = NaN;
+                                        this_validation{inds} = sprintf('@(obj,x) check_size(obj,[%s],x)',sprintf('%i ',supplied_opt_v{i}{inds}));
+                                    else
+                                        % But we can have many negatives....
+                                        % i.e. [-1 -2]. These can depend on
+                                        % each other.
+                                    end
+                                else
+                                    %In this case we have 
+                                    
+                                end
+                            end
+                        end
+                        
                         if length(unique_match) == length(supplied_opt_v{i}(ind))
                             % The length is not fixed, replace by NaN.
                             % This is not as simple as I wanted.....
