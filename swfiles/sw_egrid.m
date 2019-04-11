@@ -309,7 +309,7 @@ end
 
 % pack all cross section into a cell for easier looping
 
-if iscell(spectra.Sab)
+if isfield(spectra,'Sab') && iscell(spectra.Sab)
     nTwin = numel(spectra.Sab);
     if ~isfield(spectra,'omega')
         omega = {};
@@ -318,10 +318,39 @@ if iscell(spectra.Sab)
     end
     
     Sab   = spectra.Sab;
+%     intP  = {intP};
+    if ~iscell(intP); intP = {intP}; end
+    if ~iscell(Pab); Pab = {Pab}; end
+    if ~iscell(Mab); Mab = {Mab}; end
+    if ~iscell(Sperp); Sperp = {Sperp}; end
+%     Pab   = {Pab};
+%     Mab   = {Mab};
+%     Sperp = {Sperp};
+
+elseif isfield(spectra,'Sperp') && iscell(spectra.Sperp)
+    nTwin = numel(spectra.Sperp);
+    if ~isfield(spectra,'omega')
+        omega = {};
+    else
+        omega = spectra.omega;
+    end
+    Sab   = repmat({[]},1,nTwin);
     intP  = {intP};
     Pab   = {Pab};
     Mab   = {Mab};
-    Sperp = {Sperp};
+    Sperp = spectra.Sperp;
+elseif ~isfield(spectra,'Sab')
+    nTwin = 1;
+    if ~isfield(spectra,'omega')
+        omega = {[]};
+    else
+        omega = {spectra.omega};
+    end
+    Sab   = {[]};
+    intP  = {intP};
+    Pab   = {Pab};
+    Mab   = {Mab};
+    Sperp = {spectra.Sperp};
 else
     nTwin = 1;
     if ~isfield(spectra,'omega')
@@ -337,7 +366,11 @@ else
 end
 
 % number of modes and Q points
-nMode = size(spectra.Sab,3);
+if iscell(spectra.Sab)
+    nMode = size(spectra.Sab{1},3);
+else
+    nMode = size(spectra.Sab,3);
+end
 nHkl  = numel(spectra.hkl)/3;
 sHkl  = [size(spectra.hkl) 1];
 
